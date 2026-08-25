@@ -6,7 +6,7 @@ Rectangle {
 
     objectName: "hud"
     height: 52
-    color: "#5C47E4"
+    color: Theme.chrome
 
     function phaseLabel() {
         switch (GameEngine.phase) {
@@ -48,10 +48,9 @@ Rectangle {
 
             Text {
                 text: GameEngine.player1.name + "  " + GameEngine.player1.score
-                color: "#BFCE72"
-                font.family: "monospace"
-                font.bold: true
-                font.pixelSize: 13
+                color: Theme.accent
+                font.family: Theme.fontFamily
+                font.pixelSize: 11
             }
 
             Item {
@@ -61,7 +60,7 @@ Rectangle {
 
                 Rectangle {
                     anchors.fill: parent
-                    color: "#40318D"
+                    color: Theme.background
                 }
 
                 Rectangle {
@@ -72,7 +71,8 @@ Rectangle {
                         bottom: parent.bottom
                     }
                     width: parent.width * GameEngine.player1.health / 100
-                    color: GameEngine.player1.health > 50 ? "#94E089" : "#B86962"
+                    color: GameEngine.player1.health > 50 ? Theme.green
+                                                          : Theme.red
                 }
             }
         }
@@ -86,9 +86,8 @@ Rectangle {
             objectName: "hudTurnLabel"
             text: hud.phaseLabel()
             color: "#FFFFFF"
-            font.family: "monospace"
-            font.bold: true
-            font.pixelSize: 14
+            font.family: Theme.fontFamily
+            font.pixelSize: 12
         }
 
         Text {
@@ -97,9 +96,9 @@ Rectangle {
                   ? qsTr("WIND CALM")
                   : qsTr("WIND ") + hud.windArrows() + " "
                     + Math.abs(Math.round(GameEngine.wind))
-            color: "#94E089"
-            font.family: "monospace"
-            font.pixelSize: 12
+            color: Theme.green
+            font.family: Theme.fontFamily
+            font.pixelSize: 10
         }
     }
 
@@ -117,10 +116,9 @@ Rectangle {
 
             Text {
                 text: GameEngine.player2.score + "  " + GameEngine.player2.name
-                color: "#BFCE72"
-                font.family: "monospace"
-                font.bold: true
-                font.pixelSize: 13
+                color: Theme.accent
+                font.family: Theme.fontFamily
+                font.pixelSize: 11
             }
 
             Item {
@@ -130,7 +128,7 @@ Rectangle {
 
                 Rectangle {
                     anchors.fill: parent
-                    color: "#40318D"
+                    color: Theme.background
                 }
 
                 Rectangle {
@@ -141,7 +139,8 @@ Rectangle {
                         bottom: parent.bottom
                     }
                     width: parent.width * GameEngine.player2.health / 100
-                    color: GameEngine.player2.health > 50 ? "#94E089" : "#B86962"
+                    color: GameEngine.player2.health > 50 ? Theme.green
+                                                          : Theme.red
                 }
             }
         }

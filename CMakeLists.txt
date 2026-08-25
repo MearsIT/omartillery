@@ -11,6 +11,10 @@ qt_standard_project_setup()
 
 qt_policy(SET QTP0004 NEW)
 
+set_source_files_properties(qml/Theme.qml PROPERTIES
+    QT_QML_SINGLETON_TYPE TRUE
+)
+
 qt_add_library(artillery_core STATIC)
 qt_add_qml_module(artillery_core
     URI ArtilleryDuel
@@ -32,12 +36,17 @@ qt_add_qml_module(artillery_core
         qml/MainMenu.qml
         qml/HUD.qml
         qml/GameOverScreen.qml
+        qml/Theme.qml
     RESOURCES
         assets/tank_left.png
         assets/tank_right.png
         assets/terrain_pattern.png
         assets/projectile.png
         assets/explosion_frames.png
+        assets/fonts/c64_font.ttf
+        assets/fonts/OFL.txt
+        assets/sounds/fire.wav
+        assets/sounds/explosion.wav
 )
 
 target_include_directories(artillery_core PUBLIC src)

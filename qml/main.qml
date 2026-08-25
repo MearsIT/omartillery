@@ -1,5 +1,6 @@
 import QtQuick
 import QtQuick.Controls
+import QtMultimedia
 import ArtilleryDuel
 
 ApplicationWindow {
@@ -11,7 +12,19 @@ ApplicationWindow {
     minimumWidth: 640
     minimumHeight: 480
     visible: true
-    color: "#40318D"
+    color: Theme.background
+
+    SoundEffect {
+        id: fireSound
+        source: "qrc:/ArtilleryDuel/assets/sounds/fire.wav"
+        volume: 0.4
+    }
+
+    SoundEffect {
+        id: explosionSound
+        source: "qrc:/ArtilleryDuel/assets/sounds/explosion.wav"
+        volume: 0.6
+    }
 
     Item {
         id: viewport
@@ -34,6 +47,14 @@ ApplicationWindow {
 
         Connections {
             target: GameEngine
+
+            function onProjectileFired() {
+                fireSound.play();
+            }
+
+            function onExplosionAt(x, y) {
+                explosionSound.play();
+            }
 
             function onPhaseChanged() {
                 const phase = GameEngine.phase;

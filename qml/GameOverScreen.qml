@@ -9,54 +9,90 @@ Item {
 
     Rectangle {
         anchors.fill: parent
-        color: "#40318D"
+        color: Theme.background
     }
 
     Column {
         anchors.centerIn: parent
-        spacing: 26
+        spacing: 28
 
         Text {
             text: qsTr("GAME OVER")
-            color: "#B86962"
-            font.family: "monospace"
-            font.bold: true
-            font.pixelSize: 44
+            color: Theme.red
+            font.family: Theme.fontFamily
+            font.pixelSize: 32
             anchors.horizontalCenter: parent.horizontalCenter
         }
 
         Text {
             objectName: "winnerLabel"
             text: (GameEngine.winner ? GameEngine.winner.name : "") + " WINS"
-            color: "#BFCE72"
-            font.family: "monospace"
-            font.bold: true
-            font.pixelSize: 22
+            color: Theme.accent
+            font.family: Theme.fontFamily
+            font.pixelSize: 18
             anchors.horizontalCenter: parent.horizontalCenter
         }
 
         Text {
             objectName: "scoreLabel"
             text: GameEngine.player1.score + "  -  " + GameEngine.player2.score
-            color: "#94E089"
-            font.family: "monospace"
-            font.pixelSize: 18
+            color: Theme.green
+            font.family: Theme.fontFamily
+            font.pixelSize: 14
             anchors.horizontalCenter: parent.horizontalCenter
         }
 
-        Item { width: 1; height: 8 }
+        Item { width: 1; height: 10 }
 
         Button {
             objectName: "playAgainButton"
             text: qsTr("PLAY AGAIN")
+
             anchors.horizontalCenter: parent.horizontalCenter
+
+            background: Rectangle {
+                implicitWidth: 230
+                implicitHeight: 44
+                color: parent.pressed ? Theme.chrome : Theme.background
+                border.color: parent.hovered ? Theme.accent : Theme.green
+                border.width: 3
+            }
+
+            contentItem: Text {
+                text: parent.text
+                color: Theme.accent
+                font.family: Theme.fontFamily
+                font.pixelSize: 14
+                horizontalAlignment: Text.AlignHCenter
+                verticalAlignment: Text.AlignVCenter
+            }
+
             onClicked: GameEngine.startGame(GameEngine.gameMode)
         }
 
         Button {
             objectName: "menuButton"
             text: qsTr("MAIN MENU")
+
             anchors.horizontalCenter: parent.horizontalCenter
+
+            background: Rectangle {
+                implicitWidth: 230
+                implicitHeight: 44
+                color: parent.pressed ? Theme.chrome : Theme.background
+                border.color: parent.hovered ? Theme.accent : Theme.green
+                border.width: 3
+            }
+
+            contentItem: Text {
+                text: parent.text
+                color: Theme.accent
+                font.family: Theme.fontFamily
+                font.pixelSize: 14
+                horizontalAlignment: Text.AlignHCenter
+                verticalAlignment: Text.AlignVCenter
+            }
+
             onClicked: GameEngine.returnToMenu()
         }
     }

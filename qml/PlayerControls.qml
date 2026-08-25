@@ -62,13 +62,13 @@ FocusScope {
         spacing: 20
 
         Column {
-            spacing: 2
+            spacing: 4
 
             Label {
                 text: "ANGLE " + Math.round(angleSlider.value) + "\u00B0"
-                color: "#94E089"
-                font.family: "monospace"
-                font.bold: true
+                color: Theme.green
+                font.family: Theme.fontFamily
+                font.pixelSize: 11
             }
 
             Slider {
@@ -79,6 +79,36 @@ FocusScope {
                 stepSize: 1
                 enabled: controls.enabled
                 onValueChanged: GameEngine.currentPlayer.angle = value
+
+                background: Rectangle {
+                    x: angleSlider.leftPadding
+                    y: angleSlider.topPadding
+                       + angleSlider.availableHeight / 2 - height / 2
+                    width: angleSlider.availableWidth
+                    height: 8
+                    color: Theme.background
+                    border.width: 2
+                    border.color: Theme.dark
+
+                    Rectangle {
+                        width: angleSlider.visualPosition * parent.width
+                        height: parent.height
+                        color: Theme.green
+                    }
+                }
+
+                handle: Rectangle {
+                    x: angleSlider.leftPadding
+                       + angleSlider.visualPosition
+                         * (angleSlider.availableWidth - width)
+                    y: angleSlider.topPadding
+                       + angleSlider.availableHeight / 2 - height / 2
+                    width: 16
+                    height: 16
+                    color: Theme.steel
+                    border.width: 2
+                    border.color: Theme.dark
+                }
 
                 Connections {
                     target: GameEngine.currentPlayer
@@ -91,13 +121,13 @@ FocusScope {
         }
 
         Column {
-            spacing: 2
+            spacing: 4
 
             Label {
                 text: "POWER " + Math.round(powerSlider.value)
-                color: "#94E089"
-                font.family: "monospace"
-                font.bold: true
+                color: Theme.green
+                font.family: Theme.fontFamily
+                font.pixelSize: 11
             }
 
             Slider {
@@ -108,6 +138,36 @@ FocusScope {
                 stepSize: 1
                 enabled: controls.enabled
                 onValueChanged: GameEngine.currentPlayer.power = value
+
+                background: Rectangle {
+                    x: powerSlider.leftPadding
+                    y: powerSlider.topPadding
+                       + powerSlider.availableHeight / 2 - height / 2
+                    width: powerSlider.availableWidth
+                    height: 8
+                    color: Theme.background
+                    border.width: 2
+                    border.color: Theme.dark
+
+                    Rectangle {
+                        width: powerSlider.visualPosition * parent.width
+                        height: parent.height
+                        color: Theme.green
+                    }
+                }
+
+                handle: Rectangle {
+                    x: powerSlider.leftPadding
+                       + powerSlider.visualPosition
+                         * (powerSlider.availableWidth - width)
+                    y: powerSlider.topPadding
+                       + powerSlider.availableHeight / 2 - height / 2
+                    width: 16
+                    height: 16
+                    color: Theme.steel
+                    border.width: 2
+                    border.color: Theme.dark
+                }
 
                 Connections {
                     target: GameEngine.currentPlayer
@@ -124,6 +184,26 @@ FocusScope {
             objectName: "fireButton"
             text: qsTr("FIRE")
             enabled: controls.enabled
+
+            background: Rectangle {
+                implicitWidth: 120
+                implicitHeight: 44
+                color: parent.pressed ? Theme.chrome : Theme.background
+                border.color: parent.enabled
+                               ? (parent.hovered ? Theme.accent : Theme.green)
+                               : Theme.dark
+                border.width: 3
+            }
+
+            contentItem: Text {
+                text: parent.text
+                color: parent.enabled ? Theme.accent : Theme.dark
+                font.family: Theme.fontFamily
+                font.pixelSize: 14
+                horizontalAlignment: Text.AlignHCenter
+                verticalAlignment: Text.AlignVCenter
+            }
+
             onClicked: GameEngine.fireProjectile()
         }
     }

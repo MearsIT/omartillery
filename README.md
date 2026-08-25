@@ -54,3 +54,11 @@ qml/     QML UI (board, controls, screens)
 assets/  Pixel-art sprites, sounds, fonts
 tests/   Qt Test unit/integration tests
 ```
+
+## Assets and Attribution
+
+- Pixel-art sprites, terrain pattern, and sound effects are generated
+  for this project (no external license restrictions).
+- The display font is [Press Start 2P](https://fonts.google.com/specimen/Press+Start+2P)
+  by Cody Boisclair, licensed under the SIL Open Font License 1.1 — see
+  `assets/fonts/OFL.txt`.
