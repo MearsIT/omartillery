@@ -1,4 +1,4 @@
-# Artillery Duel
+# OmArtillery
 
 An Omarchy plugin bringing classic turn-based artillery combat to your desktop shell. A retro-faithful recreation of Artillery Duel (Xonox, 1983) with physics-based projectile motion, wind, and C64 pixel-art aesthetic.
 
