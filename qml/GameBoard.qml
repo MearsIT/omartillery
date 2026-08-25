@@ -1,5 +1,7 @@
+pragma ModuleName: "io.github.jandal.artillery-duel"
+
 import QtQuick
-import ArtilleryDuel
+import io.github.jandal.artillery-duel
 
 Item {
     id: board
@@ -38,7 +40,7 @@ Item {
             ctx.fillStyle = "#8B5429";
             ctx.fill();
             ctx.fillStyle = ctx.createPattern(
-                        "qrc:/ArtilleryDuel/assets/terrain_pattern.png",
+                        "assets/terrain_pattern.png",
                         "repeat");
             ctx.fill();
             ctx.fillStyle = "#574200";

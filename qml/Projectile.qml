@@ -1,11 +1,13 @@
+pragma ModuleName: "io.github.jandal.artillery-duel"
+
 import QtQuick
-import ArtilleryDuel
+import io.github.jandal.artillery-duel
 
 Image {
     id: projectile
 
     objectName: "projectile"
-    source: "qrc:/ArtilleryDuel/assets/projectile.png"
+    source: "assets/projectile.png"
     width: 8
     height: 8
     smooth: false

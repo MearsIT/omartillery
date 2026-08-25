@@ -1,9 +1,11 @@
 pragma Singleton
+pragma ModuleName: "io.github.jandal.artillery-duel"
+
 import QtQuick
 
 QtObject {
     readonly property FontLoader fontLoader: FontLoader {
-        source: "qrc:/ArtilleryDuel/assets/fonts/c64_font.ttf"
+        source: "assets/fonts/c64_font.ttf"
     }
 
     readonly property string fontFamily: fontLoader.name

@@ -1,5 +1,7 @@
+pragma ModuleName: "io.github.jandal.artillery-duel"
+
 import QtQuick
-import ArtilleryDuel
+import io.github.jandal.artillery-duel
 
 Item {
     id: over

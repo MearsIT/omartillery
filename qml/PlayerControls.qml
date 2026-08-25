@@ -1,6 +1,8 @@
+pragma ModuleName: "io.github.jandal.artillery-duel"
+
 import QtQuick
 import QtQuick.Controls
-import ArtilleryDuel
+import io.github.jandal.artillery-duel
 
 FocusScope {
     id: controls
