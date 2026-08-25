@@ -1,3 +1,4 @@
 .claude/
 build/
 *.user
+.claude/worktrees/
