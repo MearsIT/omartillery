@@ -17,10 +17,10 @@ set_source_files_properties(qml/Theme.qml PROPERTIES
 
 qt_add_library(artillery_core SHARED)
 qt_add_qml_module(artillery_core
-    URI io.github.jandal.artillery-duel
+    URI omartillery
     VERSION 1.0
     RESOURCE_PREFIX /
-    OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/io/github/jandal/artillery-duel
+    OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/omartillery
     SOURCES
         src/player.h src/player.cpp
         src/gameengine.h src/gameengine.cpp
