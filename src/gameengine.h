@@ -6,6 +6,7 @@
 
 #include "player.h"
 #include "physicsengine.h"
+#include "aiopponent.h"
 
 class QQmlEngine;
 class QJSEngine;
@@ -78,6 +79,7 @@ public:
     Q_INVOKABLE void resolveShot(bool directHit);
     Q_INVOKABLE void updateFlight(qreal elapsedSeconds);
     Q_INVOKABLE void explosionFinished();
+    Q_INVOKABLE void aiTakeShot();
     Q_INVOKABLE qreal terrainHeightAt(qreal x) const;
 
 signals:
@@ -115,6 +117,7 @@ private:
     QVariantList m_terrainList;
 
     PhysicsEngine m_physics;
+    AIOpponent m_ai;
     bool m_projectileInFlight = false;
     bool m_pendingDirectHit = false;
     QPointF m_projectilePos;

@@ -21,6 +21,7 @@ qt_add_qml_module(artillery_core
         src/player.h src/player.cpp
         src/gameengine.h src/gameengine.cpp
         src/physicsengine.h src/physicsengine.cpp
+        src/aiopponent.h src/aiopponent.cpp
     QML_FILES
         qml/main.qml
         qml/GameBoard.qml

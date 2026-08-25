@@ -229,6 +229,25 @@ void GameEngine::finishMiss()
     emit flightFinished();
 }
 
+void GameEngine::aiTakeShot()
+{
+    if (m_phase != Phase::AITurn || m_current == nullptr || !m_current->isAI())
+        return;
+
+    Player *shooter = m_current;
+    Player *target = m_currentIndex == 0 ? m_player2 : m_player1;
+
+    const QPointF origin(shooter->x(), shooter->y() - 8.0);
+    const QPointF aimPoint(target->x(), target->y() - 8.0);
+    const QPointF shot = m_ai.calculateShotWithError(origin, aimPoint,
+                                                     shooter->facing(), m_wind,
+                                                     terrainHeightAt(target->x()));
+
+    shooter->setAngle(shot.x());
+    shooter->setPower(shot.y());
+    fireProjectile();
+}
+
 void GameEngine::resolveShot(bool directHit)
 {
     if (m_phase != Phase::Player1Fire && m_phase != Phase::Player2Fire)
