@@ -17,6 +17,7 @@ private slots:
     void slidersUpdateEngine();
     void fireButtonClickFires();
     void keyboardAdjustsAndFires();
+    void arrowKeyClampingAtBounds();
     void disabledDuringNonAimPhases();
     void sliderValuesClamped();
     void sliderResyncOnTurnSwitch();
@@ -102,13 +103,13 @@ void TestControlsBinding::keyboardAdjustsAndFires()
     const qreal baseAngle = engine->currentPlayer()->angle();
     const qreal basePower = engine->currentPlayer()->power();
 
-    QTest::keyClick(&window, Qt::Key_Right);
+    QTest::keyClick(&window, Qt::Key_Left);
     QTRY_COMPARE(engine->currentPlayer()->angle(), baseAngle + 1.0);
 
     QTest::keyClick(&window, Qt::Key_Up);
     QTRY_COMPARE(engine->currentPlayer()->power(), basePower + 1.0);
 
-    QTest::keyClick(&window, Qt::Key_Left);
+    QTest::keyClick(&window, Qt::Key_Right);
     QTRY_COMPARE(engine->currentPlayer()->angle(), baseAngle);
 
     QTest::keyClick(&window, Qt::Key_Down);
@@ -116,6 +117,50 @@ void TestControlsBinding::keyboardAdjustsAndFires()
 
     QTest::keyClick(&window, Qt::Key_Space);
     QTRY_COMPARE(engine->phase(), GameEngine::Phase::Player1Fire);
+}
+
+void TestControlsBinding::arrowKeyClampingAtBounds()
+{
+    QQmlEngine qmlEngine;
+    QScopedPointer<QObject> root;
+    QQuickItem *controls = createControls(qmlEngine, root);
+    QVERIFY(controls != nullptr);
+
+    GameEngine *engine = engineSingleton(qmlEngine);
+    QVERIFY(engine != nullptr);
+    engine->startGame(GameEngine::GameMode::TwoPlayer);
+
+    QQuickWindow window;
+    window.resize(400, 120);
+    controls->setParentItem(window.contentItem());
+    controls->setFocus(true);
+    window.show();
+    QVERIFY(QTest::qWaitForWindowExposed(&window));
+    QTRY_VERIFY(controls->hasActiveFocus());
+
+    // Happy path: Left arrow increases angle from 45 to 46
+    engine->currentPlayer()->setAngle(45.0);
+    QTRY_COMPARE(engine->currentPlayer()->angle(), 45.0);
+    QTest::keyClick(&window, Qt::Key_Left);
+    QTRY_COMPARE(engine->currentPlayer()->angle(), 46.0);
+
+    // Happy path: Right arrow decreases angle from 45 to 44
+    engine->currentPlayer()->setAngle(45.0);
+    QTRY_COMPARE(engine->currentPlayer()->angle(), 45.0);
+    QTest::keyClick(&window, Qt::Key_Right);
+    QTRY_COMPARE(engine->currentPlayer()->angle(), 44.0);
+
+    // Edge case: Left arrow at 90 degrees does not increase (clamped)
+    engine->currentPlayer()->setAngle(90.0);
+    QTRY_COMPARE(engine->currentPlayer()->angle(), 90.0);
+    QTest::keyClick(&window, Qt::Key_Left);
+    QTRY_COMPARE(engine->currentPlayer()->angle(), 90.0);
+
+    // Edge case: Right arrow at 0 degrees does not decrease (clamped)
+    engine->currentPlayer()->setAngle(0.0);
+    QTRY_COMPARE(engine->currentPlayer()->angle(), 0.0);
+    QTest::keyClick(&window, Qt::Key_Right);
+    QTRY_COMPARE(engine->currentPlayer()->angle(), 0.0);
 }
 
 void TestControlsBinding::disabledDuringNonAimPhases()

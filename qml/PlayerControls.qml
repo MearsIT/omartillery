@@ -66,11 +66,11 @@ FocusScope {
     Keys.onPressed: function(event) {
         switch (event.key) {
         case Qt.Key_Left:
-            GameEngine.currentPlayer.angle -= 1;
+            GameEngine.currentPlayer.angle += 1;
             event.accepted = true;
             break;
         case Qt.Key_Right:
-            GameEngine.currentPlayer.angle += 1;
+            GameEngine.currentPlayer.angle -= 1;
             event.accepted = true;
             break;
         case Qt.Key_Down:
