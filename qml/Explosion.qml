@@ -1,4 +1,3 @@
-pragma ModuleName: "omartillery"
 
 import QtQuick
 

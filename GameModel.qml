@@ -1,5 +1,4 @@
 pragma Singleton
-pragma ModuleName: "omartillery"
 
 import QtQuick
 
