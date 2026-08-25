@@ -5,7 +5,7 @@ project(artillery-duel VERSION 0.1.0 LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-find_package(Qt6 6.4 REQUIRED COMPONENTS Quick QuickControls2 Multimedia Test)
+find_package(Qt6 6.4 REQUIRED COMPONENTS Quick QuickControls2 QuickTest Multimedia Test)
 
 qt_standard_project_setup()
 
@@ -25,6 +25,7 @@ qt_add_qml_module(artillery_core
         qml/main.qml
         qml/GameBoard.qml
         qml/Tank.qml
+        qml/PlayerControls.qml
     RESOURCES
         assets/tank_left.png
         assets/tank_right.png
