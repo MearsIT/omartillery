@@ -81,7 +81,6 @@ Item {
 
     FrameAnimation {
         running: GameEngine.projectileInFlight
-        onTriggered: (deltaTime) =>
-            GameEngine.updateFlight(GameEngine.projectileTime + deltaTime)
+        onTriggered: GameEngine.updateFlight(GameEngine.projectileTime + frameTime)
     }
 }

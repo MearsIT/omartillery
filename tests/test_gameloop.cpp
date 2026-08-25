@@ -6,6 +6,7 @@
 #include "player.h"
 
 #include <QQmlApplicationEngine>
+#include <QDateTime>
 #include <QQuickItem>
 #include <QQuickWindow>
 
@@ -18,6 +19,7 @@ private slots:
     void completeTwoPlayerGame();
     void completeVsAIGame();
     void hudReflectsGameState();
+    void qmlDrivenFlightResolvesTurn();
 
 private:
     static bool findClearShot(const GameEngine &engine, qreal &angle,
@@ -285,6 +287,37 @@ void TestGameLoop::hudReflectsGameState()
     QCOMPARE(engine->player2()->health(),
              Player::MAX_HEALTH - GameEngine::HIT_DAMAGE);
     QTRY_COMPARE(fill2->width(), bar2->width() / 2);
+}
+
+void TestGameLoop::qmlDrivenFlightResolvesTurn()
+{
+    QQmlApplicationEngine qmlEngine;
+    GameEngine *engine = loadUi(qmlEngine);
+    QVERIFY(engine != nullptr);
+    engine->startGame(GameEngine::GameMode::TwoPlayer);
+    engine->setWind(0.0);
+
+    auto *window = qobject_cast<QQuickWindow *>(qmlEngine.rootObjects().first());
+    QVERIFY(window != nullptr);
+    window->show();
+    QVERIFY(QTest::qWaitForWindowExposed(window));
+
+    engine->currentPlayer()->setAngle(45.0);
+    engine->currentPlayer()->setPower(60.0);
+    engine->fireProjectile();
+    QVERIFY(engine->projectileInFlight());
+
+    const qint64 deadline = QDateTime::currentMSecsSinceEpoch() + 15000;
+    while (engine->phase() == GameEngine::Phase::Player1Fire
+           && QDateTime::currentMSecsSinceEpoch() < deadline) {
+        QTest::qWait(50);
+    }
+
+    QVERIFY2(engine->phase() != GameEngine::Phase::Player1Fire,
+             "QML-driven flight never resolved: FrameAnimation/Explosion wiring broken");
+    QVERIFY(engine->phase() == GameEngine::Phase::Player2Aim
+            || engine->phase() == GameEngine::Phase::GameOver);
+    QVERIFY(!engine->projectileInFlight());
 }
 
 QTEST_MAIN(TestGameLoop)

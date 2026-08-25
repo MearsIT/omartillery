@@ -43,21 +43,22 @@ Item {
         Item { width: 1; height: 16 }
 
         Button {
+            id: menuTwoPlayerBtn
             objectName: "twoPlayerButton"
             text: qsTr("2 PLAYER")
 
-            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.horizontalCenter: menuTwoPlayerBtn.horizontalCenter
 
             background: Rectangle {
                 implicitWidth: 230
                 implicitHeight: 44
-                color: parent.pressed ? Theme.chrome : Theme.background
-                border.color: parent.hovered ? Theme.accent : Theme.green
+                color: menuTwoPlayerBtn.pressed ? Theme.chrome : Theme.background
+                border.color: menuTwoPlayerBtn.hovered ? Theme.accent : Theme.green
                 border.width: 3
             }
 
             contentItem: Text {
-                text: parent.text
+                text: menuTwoPlayerBtn.text
                 color: Theme.accent
                 font.family: Theme.fontFamily
                 font.pixelSize: 14
@@ -69,21 +70,22 @@ Item {
         }
 
         Button {
+            id: menuVsAiBtn
             objectName: "vsAiButton"
             text: qsTr("VS COMPUTER")
 
-            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.horizontalCenter: menuVsAiBtn.horizontalCenter
 
             background: Rectangle {
                 implicitWidth: 230
                 implicitHeight: 44
-                color: parent.pressed ? Theme.chrome : Theme.background
-                border.color: parent.hovered ? Theme.accent : Theme.green
+                color: menuVsAiBtn.pressed ? Theme.chrome : Theme.background
+                border.color: menuVsAiBtn.hovered ? Theme.accent : Theme.green
                 border.width: 3
             }
 
             contentItem: Text {
-                text: parent.text
+                text: menuVsAiBtn.text
                 color: Theme.accent
                 font.family: Theme.fontFamily
                 font.pixelSize: 14
@@ -99,7 +101,7 @@ Item {
             color: Theme.green
             font.family: Theme.fontFamily
             font.pixelSize: 9
-            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.horizontalCenter: menuVsAiBtn.horizontalCenter
         }
     }
 }

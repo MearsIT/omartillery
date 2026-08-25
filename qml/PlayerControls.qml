@@ -188,16 +188,16 @@ FocusScope {
             background: Rectangle {
                 implicitWidth: 120
                 implicitHeight: 44
-                color: parent.pressed ? Theme.chrome : Theme.background
-                border.color: parent.enabled
-                               ? (parent.hovered ? Theme.accent : Theme.green)
+                color: fireButton.pressed ? Theme.chrome : Theme.background
+                border.color: fireButton.enabled
+                               ? (fireButton.hovered ? Theme.accent : Theme.green)
                                : Theme.dark
                 border.width: 3
             }
 
             contentItem: Text {
-                text: parent.text
-                color: parent.enabled ? Theme.accent : Theme.dark
+                text: fireButton.text
+                color: fireButton.enabled ? Theme.accent : Theme.dark
                 font.family: Theme.fontFamily
                 font.pixelSize: 14
                 horizontalAlignment: Text.AlignHCenter

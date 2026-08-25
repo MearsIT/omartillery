@@ -18,12 +18,5 @@ AnimatedSprite {
 
     signal done
 
-    Timer {
-        interval: explosion.frameCount / explosion.frameRate * 1000
-        running: explosion.running
-        onTriggered: {
-            explosion.running = false;
-            explosion.done();
-        }
-    }
+    onFinished: done()
 }

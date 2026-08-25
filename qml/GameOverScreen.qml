@@ -45,21 +45,22 @@ Item {
         Item { width: 1; height: 10 }
 
         Button {
+            id: overPlayAgainBtn
             objectName: "playAgainButton"
             text: qsTr("PLAY AGAIN")
 
-            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.horizontalCenter: overPlayAgainBtn.horizontalCenter
 
             background: Rectangle {
                 implicitWidth: 230
                 implicitHeight: 44
-                color: parent.pressed ? Theme.chrome : Theme.background
-                border.color: parent.hovered ? Theme.accent : Theme.green
+                color: overPlayAgainBtn.pressed ? Theme.chrome : Theme.background
+                border.color: overPlayAgainBtn.hovered ? Theme.accent : Theme.green
                 border.width: 3
             }
 
             contentItem: Text {
-                text: parent.text
+                text: overPlayAgainBtn.text
                 color: Theme.accent
                 font.family: Theme.fontFamily
                 font.pixelSize: 14
@@ -71,21 +72,22 @@ Item {
         }
 
         Button {
+            id: overMenuBtn
             objectName: "menuButton"
             text: qsTr("MAIN MENU")
 
-            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.horizontalCenter: overMenuBtn.horizontalCenter
 
             background: Rectangle {
                 implicitWidth: 230
                 implicitHeight: 44
-                color: parent.pressed ? Theme.chrome : Theme.background
-                border.color: parent.hovered ? Theme.accent : Theme.green
+                color: overMenuBtn.pressed ? Theme.chrome : Theme.background
+                border.color: overMenuBtn.hovered ? Theme.accent : Theme.green
                 border.width: 3
             }
 
             contentItem: Text {
-                text: parent.text
+                text: overMenuBtn.text
                 color: Theme.accent
                 font.family: Theme.fontFamily
                 font.pixelSize: 14
