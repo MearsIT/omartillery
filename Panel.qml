@@ -11,6 +11,13 @@ Item {
     // No window properties needed - fill parent surface
     anchors.fill: parent
 
+    // Properties for bar-widget integration
+    property bool popoutSwitchClosing: false
+    property var barWidget: null
+    property var button: null
+    property var bar: null
+    property var hostWidget: null
+
     // Panel lifecycle API methods required by Omarchy shell
     function open() {
         root.visible = true;
@@ -25,8 +32,10 @@ Item {
     }
 
     function closeForPopoutSwitch() {
-        // Close for popout transition - same as close for this plugin
+        // Close for popout transition
+        popoutSwitchClosing = true;
         root.visible = false;
+        Qt.callLater(function() { popoutSwitchClosing = false; });
     }
 
     Rectangle {

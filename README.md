@@ -4,58 +4,29 @@ An Omarchy plugin bringing classic turn-based artillery combat to your desktop s
 
 ## Plugin Type
 
-**Panel** — Floating game window summoned via IPC
+**Bar-Widget** — Click the 🎮 icon in your Omarchy bar to play
 
 ## Installation
 
-### From Source Repository
+**Using Omarchy GUI (Recommended)**:
+
+1. Press **Super+Space** (Omarchy launcher)
+2. Search for **"Add Plugin"**
+3. Enter: `https://github.com/MearsIT/omartillery`
+4. Plugin installs automatically
+5. A 🎮 icon appears in your Omarchy bar
+
+**Alternative - Command Line**:
 
 ```sh
 omarchy plugin add https://github.com/MearsIT/omartillery
 ```
 
-### Manual Installation
-
-1. Clone or copy this repository to `~/.config/omarchy/plugins/omartillery/`
-2. Enable the plugin by adding it to `~/.config/omarchy/shell.json`:
-
-```json
-{
-  "plugins": {
-    "omartillery": {
-      "enabled": true
-    }
-  }
-}
-```
-
-3. Restart Omarchy shell or run:
-
-```sh
-omarchy-shell shell rescanPlugins
-```
-
 ## Usage
 
-### Summon the Game Panel
+**Click the 🎮 icon** in your Omarchy bar to open/close the game.
 
-```sh
-omarchy-shell shell summon omartillery '{}'
-```
-
-### Hide the Panel
-
-```sh
-omarchy-shell shell hide omartillery
-```
-
-### Toggle Visibility
-
-```sh
-omarchy-shell shell toggle omartillery '{}'
-```
-
-You can bind these commands to keyboard shortcuts in your Omarchy configuration.
+The game appears as a popup panel from the bar icon. Click the icon again to close.
 
 ## Game Modes
 
@@ -127,21 +98,24 @@ omarchy-shell shell summon omartillery '{}'
 
 ```
 manifest.json           Plugin metadata and entry points
-Panel.qml              Main panel component (entry point)
+BarWidget.qml          Bar icon and popup manager (entry point)
+Panel.qml              Game panel content (loaded by BarWidget)
 qml/                   QML UI components
-GameModel.qml          Pure JavaScript game engine (singleton)
+GameModel.qml          Game state singleton
 assets/                Pixel-art sprites, sounds, fonts
 LICENSE                MIT License
 ```
 
 ## Plugin Architecture
 
-Artillery Duel is structured as an Omarchy panel plugin:
+Omartillery is structured as an Omarchy bar-widget plugin:
 
-- **Entry Point**: `Panel.qml` declared in `manifest.json`
-- **QML Module**: `io.github.jandal.artillery-duel` (reverse-domain URI)
-- **C++ Extension**: Game logic exposed via QML types (GameEngine, Player, PhysicsEngine, AIOpponent)
-- **Lifecycle**: Implements panel API (`open()`, `close()`, `toggle()`, `closeForPopoutSwitch()`)
+- **Entry Point**: `BarWidget.qml` declared in `manifest.json`
+- **Bar Icon**: 🎮 emoji (future: custom pixel-art icon)
+- **Game Panel**: `Panel.qml` loaded as popup from BarWidget
+- **QML Module**: `omartillery` with singleton GameModel
+- **Pure QML/JS**: No C++ compilation required
+- **Lifecycle**: Implements bar-widget API (`open()`, `close()`, `toggle()`, `closeForPopoutSwitch()`)
 - **Assets**: Loaded from filesystem paths relative to plugin directory
 
 The plugin shares the Omarchy shell's process and runs unsandboxed with user permissions.

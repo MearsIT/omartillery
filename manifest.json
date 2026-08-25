@@ -2,12 +2,12 @@
   "schemaVersion": 1,
   "id": "omartillery",
   "name": "Omartillery",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "author": "Martin Mears",
   "license": "MIT",
   "description": "Turn-based artillery combat game - retro C64 recreation with physics-based projectile motion",
-  "kinds": ["panel"],
+  "kinds": ["bar-widget"],
   "entryPoints": {
-    "panel": "Panel.qml"
+    "bar-widget": "BarWidget.qml"
   }
 }
