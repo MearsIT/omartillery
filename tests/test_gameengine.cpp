@@ -19,6 +19,11 @@ private slots:
     void turnCycleVsAI();
     void winBySecondHit();
     void windStaysInRange();
+    void windChangesGradually();
+    void windDriftFromZero();
+    void windDriftAccumulates();
+    void windDriftClampsAtMaximum();
+    void windDriftClampsAtMinimum();
     void terrainShapeAndSampling();
     void modeSwitchMidGame();
     void qmlPropertyAccess();
@@ -180,6 +185,82 @@ void TestGameEngine::windStaysInRange()
     QVERIFY(spawnAndResolveCycle(engine, 40));
     QVERIFY(engine.wind() >= -GameEngine::WIND_MAX);
     QVERIFY(engine.wind() <= GameEngine::WIND_MAX);
+}
+
+void TestGameEngine::windChangesGradually()
+{
+    GameEngine engine;
+    engine.startGame(GameEngine::GameMode::TwoPlayer);
+
+    const int numTurns = 50;
+    for (int i = 0; i < numTurns; ++i) {
+        const qreal windBefore = engine.wind();
+        engine.fireProjectile();
+        engine.resolveShot(false);
+        const qreal windAfter = engine.wind();
+        const qreal change = qAbs(windAfter - windBefore);
+        QVERIFY2(change <= 20.0,
+                 qPrintable(QString("Wind changed by %1, expected <= 20").arg(change)));
+    }
+}
+
+void TestGameEngine::windDriftFromZero()
+{
+    GameEngine engine;
+    engine.startGame(GameEngine::GameMode::TwoPlayer);
+    engine.setWind(0.0);
+
+    engine.fireProjectile();
+    engine.resolveShot(false);
+
+    const qreal wind = engine.wind();
+    QVERIFY2(wind >= -15.0 && wind <= 15.0,
+             qPrintable(QString("Wind %1 not in range [-15, 15]").arg(wind)));
+}
+
+void TestGameEngine::windDriftAccumulates()
+{
+    GameEngine engine;
+    engine.startGame(GameEngine::GameMode::TwoPlayer);
+
+    const qreal initialWind = engine.wind();
+    for (int i = 0; i < 3; ++i) {
+        engine.fireProjectile();
+        engine.resolveShot(false);
+    }
+
+    const qreal finalWind = engine.wind();
+    const qreal totalChange = qAbs(finalWind - initialWind);
+    QVERIFY2(totalChange >= 0.0 && totalChange <= 60.0,
+             qPrintable(QString("Total change %1 outside expected range").arg(totalChange)));
+}
+
+void TestGameEngine::windDriftClampsAtMaximum()
+{
+    GameEngine engine;
+    engine.setWind(55.0);
+    engine.startGame(GameEngine::GameMode::TwoPlayer);
+
+    for (int i = 0; i < 10; ++i) {
+        engine.fireProjectile();
+        engine.resolveShot(false);
+        QVERIFY2(engine.wind() <= GameEngine::WIND_MAX,
+                 qPrintable(QString("Wind %1 exceeded WIND_MAX").arg(engine.wind())));
+    }
+}
+
+void TestGameEngine::windDriftClampsAtMinimum()
+{
+    GameEngine engine;
+    engine.setWind(-55.0);
+    engine.startGame(GameEngine::GameMode::TwoPlayer);
+
+    for (int i = 0; i < 10; ++i) {
+        engine.fireProjectile();
+        engine.resolveShot(false);
+        QVERIFY2(engine.wind() >= -GameEngine::WIND_MAX,
+                 qPrintable(QString("Wind %1 below -WIND_MAX").arg(engine.wind())));
+    }
 }
 
 void TestGameEngine::terrainShapeAndSampling()

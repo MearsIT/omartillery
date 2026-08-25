@@ -122,7 +122,7 @@ void GameEngine::startGame(GameMode mode)
     m_current = m_player1;
     emit currentPlayerChanged();
 
-    randomizeWind();
+    randomizeWind(true);
     setPhase(Phase::Player1Aim);
 }
 
@@ -309,9 +309,14 @@ void GameEngine::advanceTurn()
         setPhase(m_current == m_player1 ? Phase::Player1Aim : Phase::Player2Aim);
 }
 
-void GameEngine::randomizeWind()
+void GameEngine::randomizeWind(bool useFullRange)
 {
-    m_wind = QRandomGenerator::global()->bounded(2.0 * WIND_MAX) - WIND_MAX;
+    if (useFullRange) {
+        m_wind = QRandomGenerator::global()->bounded(2.0 * WIND_MAX) - WIND_MAX;
+    } else {
+        const qreal delta = QRandomGenerator::global()->bounded(30.0) - 15.0;
+        m_wind = qBound(-WIND_MAX, m_wind + delta, WIND_MAX);
+    }
     emit windChanged();
 }
 
