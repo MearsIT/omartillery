@@ -3,6 +3,7 @@
 #include "gameengine.h"
 #include "physicsengine.h"
 #include "player.h"
+#include "testutils.h"
 
 class TestFlight : public QObject
 {
@@ -15,16 +16,7 @@ private slots:
     void directHitDamagesOpponent();
     void offscreenMissResolvesImmediately();
     void shooterImmuneToOwnShot();
-
-private:
-    static void stepFlight(GameEngine &engine, qreal dt, int maxSteps);
 };
-
-void TestFlight::stepFlight(GameEngine &engine, qreal dt, int maxSteps)
-{
-    for (int i = 0; i < maxSteps && engine.projectileInFlight(); ++i)
-        engine.updateFlight(engine.projectileTime() + dt);
-}
 
 void TestFlight::fireLaunchesFlightFromMuzzle()
 {
@@ -42,11 +34,7 @@ void TestFlight::fireLaunchesFlightFromMuzzle()
     QCOMPARE(firedSpy.count(), 1);
     QCOMPARE(engine.projectileTime(), 0.0);
 
-    const Player *p = engine.player1();
-    const PhysicsEngine physics;
-    const QPointF center(p->x(), p->y() - 8.0);
-    const QPointF muzzle(center.x() + 12.0 * qCos(qDegreesToRadians(45.0)),
-                         center.y() - 12.0 * qSin(qDegreesToRadians(45.0)));
+    const QPointF muzzle = TestUtils::muzzlePos(engine.player1(), 45.0);
     QVERIFY(qAbs(engine.projectileX() - muzzle.x()) < 0.01);
     QVERIFY(qAbs(engine.projectileY() - muzzle.y()) < 0.01);
 }
@@ -64,15 +52,11 @@ void TestFlight::positionMatchesPhysicsAnalytically()
         engine.setWind(-20.0);
         const Player *shooter = engine.currentPlayer();
         const int facing = shooter->facing();
-        const QPointF shooterCenter(shooter->x(), shooter->y() - 8.0);
         engine.currentPlayer()->setAngle(angleDeg);
         engine.currentPlayer()->setPower(70.0);
         engine.fireProjectile();
 
-        const QPointF origin(shooterCenter.x()
-                                 + facing * 12.0 * qCos(qDegreesToRadians(angleDeg)),
-                             shooterCenter.y()
-                                 - 12.0 * qSin(qDegreesToRadians(angleDeg)));
+        const QPointF origin = TestUtils::muzzlePos(shooter, angleDeg);
 
         qreal t = 0.0;
         while (t < 0.4) {
@@ -107,7 +91,7 @@ void TestFlight::terrainImpactExplodesThenAdvancesAfterAnimation()
     QSignalSpy flightDoneSpy(&engine, &GameEngine::flightFinished);
 
     engine.fireProjectile();
-    stepFlight(engine, 1.0 / 60.0, 600);
+    TestUtils::stepFlight(engine, 1.0 / 60.0, 600);
 
     QVERIFY(!engine.projectileInFlight());
     QCOMPARE(explosionSpy.count(), 1);
@@ -129,54 +113,30 @@ void TestFlight::terrainImpactExplodesThenAdvancesAfterAnimation()
 void TestFlight::directHitDamagesOpponent()
 {
     GameEngine engine;
-    const PhysicsEngine physics;
 
     bool found = false;
     for (int attempt = 0; attempt < 12 && !found; ++attempt) {
         engine.startGame(GameEngine::GameMode::TwoPlayer);
         engine.setWind(0.0);
 
-        const Player *p1 = engine.player1();
-        const Player *p2 = engine.player2();
-        const QPointF boxCenter(p2->x(), p2->y() - 8.0);
+        qreal angle = 0.0;
+        qreal power = 0.0;
+        if (!TestUtils::findClearShot(engine, angle, power))
+            continue;
 
-        for (int angle = 15; angle <= 85 && !found; angle += 5) {
-            const QPointF origin(p1->x()
-                                     + 12.0 * qCos(qDegreesToRadians(angle)),
-                                 p1->y() - 8.0
-                                     - 12.0 * qSin(qDegreesToRadians(angle)));
-            for (int power = 15; power <= 100 && !found; ++power) {
-                const auto sim = physics.simulate(origin, angle, power, 1, 0.0,
-                                                  GameEngine::BOARD_HEIGHT + 60.0);
-                const qreal tEnd = qMin(sim.hitGround ? sim.flightTime : 4.0, 4.0);
-                bool terrainFirst = false;
-                bool boxHit = false;
-                for (qreal t = 0.0; t <= tEnd && !terrainFirst && !boxHit;
-                     t += 1.0 / 480.0) {
-                    const QPointF q = physics.positionAt(origin, angle, power, 1,
-                                                         0.0, t);
-                    if (physics.pointIntersectsBox(q, boxCenter, 12.0, 12.0))
-                        boxHit = true;
-                    else if (q.y() >= engine.terrainHeightAt(q.x()) - 2.0)
-                        terrainFirst = true;
-                }
-                if (boxHit && !terrainFirst) {
-                    QSignalSpy explosionSpy(&engine, &GameEngine::explosionAt);
-                    engine.currentPlayer()->setAngle(angle);
-                    engine.currentPlayer()->setPower(power);
-                    engine.fireProjectile();
-                    stepFlight(engine, 1.0 / 120.0, 1200);
+        QSignalSpy explosionSpy(&engine, &GameEngine::explosionAt);
+        engine.currentPlayer()->setAngle(angle);
+        engine.currentPlayer()->setPower(power);
+        engine.fireProjectile();
+        TestUtils::stepFlight(engine, 1.0 / 120.0, 1200);
 
-                    QVERIFY(!engine.projectileInFlight());
-                    QCOMPARE(explosionSpy.count(), 1);
-                    engine.explosionFinished();
-                    QCOMPARE(engine.player2()->health(),
-                             Player::MAX_HEALTH - GameEngine::HIT_DAMAGE);
-                    QCOMPARE(engine.phase(), GameEngine::Phase::Player2Aim);
-                    found = true;
-                }
-            }
-        }
+        QVERIFY(!engine.projectileInFlight());
+        QCOMPARE(explosionSpy.count(), 1);
+        engine.explosionFinished();
+        QCOMPARE(engine.player2()->health(),
+                 Player::MAX_HEALTH - GameEngine::HIT_DAMAGE);
+        QCOMPARE(engine.phase(), GameEngine::Phase::Player2Aim);
+        found = true;
     }
     QVERIFY2(found, "no clear trajectory found to opponent");
 }
@@ -202,7 +162,7 @@ void TestFlight::offscreenMissResolvesImmediately()
                 engine.currentPlayer()->setAngle(angle);
                 engine.currentPlayer()->setPower(power);
                 engine.fireProjectile();
-                stepFlight(engine, 1.0 / 60.0, 1200);
+                TestUtils::stepFlight(engine, 1.0 / 60.0, 1200);
 
                 QVERIFY2(!engine.projectileInFlight(),
                          "flight did not terminate within 20 s of simulated time");
@@ -232,7 +192,7 @@ void TestFlight::shooterImmuneToOwnShot()
     engine.currentPlayer()->setPower(10.0);
 
     engine.fireProjectile();
-    stepFlight(engine, 1.0 / 60.0, 600);
+    TestUtils::stepFlight(engine, 1.0 / 60.0, 600);
 
     QVERIFY(!engine.projectileInFlight());
     QCOMPARE(engine.player1()->health(), Player::MAX_HEALTH);

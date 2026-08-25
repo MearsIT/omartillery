@@ -37,6 +37,7 @@ qt_add_qml_module(artillery_core
         qml/HUD.qml
         qml/GameOverScreen.qml
         qml/Theme.qml
+        qml/RetroButton.qml
     RESOURCES
         assets/tank_left.png
         assets/tank_right.png

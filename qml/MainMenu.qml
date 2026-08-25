@@ -42,57 +42,17 @@ Item {
 
         Item { width: 1; height: 16 }
 
-        Button {
-            id: menuTwoPlayerBtn
+        RetroButton {
             objectName: "twoPlayerButton"
             text: qsTr("2 PLAYER")
-
-            anchors.horizontalCenter: menuTwoPlayerBtn.horizontalCenter
-
-            background: Rectangle {
-                implicitWidth: 230
-                implicitHeight: 44
-                color: menuTwoPlayerBtn.pressed ? Theme.chrome : Theme.background
-                border.color: menuTwoPlayerBtn.hovered ? Theme.accent : Theme.green
-                border.width: 3
-            }
-
-            contentItem: Text {
-                text: menuTwoPlayerBtn.text
-                color: Theme.accent
-                font.family: Theme.fontFamily
-                font.pixelSize: 14
-                horizontalAlignment: Text.AlignHCenter
-                verticalAlignment: Text.AlignVCenter
-            }
-
+            anchors.horizontalCenter: parent.horizontalCenter
             onClicked: GameEngine.startGame(GameEngine.TwoPlayer)
         }
 
-        Button {
-            id: menuVsAiBtn
+        RetroButton {
             objectName: "vsAiButton"
             text: qsTr("VS COMPUTER")
-
-            anchors.horizontalCenter: menuVsAiBtn.horizontalCenter
-
-            background: Rectangle {
-                implicitWidth: 230
-                implicitHeight: 44
-                color: menuVsAiBtn.pressed ? Theme.chrome : Theme.background
-                border.color: menuVsAiBtn.hovered ? Theme.accent : Theme.green
-                border.width: 3
-            }
-
-            contentItem: Text {
-                text: menuVsAiBtn.text
-                color: Theme.accent
-                font.family: Theme.fontFamily
-                font.pixelSize: 14
-                horizontalAlignment: Text.AlignHCenter
-                verticalAlignment: Text.AlignVCenter
-            }
-
+            anchors.horizontalCenter: parent.horizontalCenter
             onClicked: GameEngine.startGame(GameEngine.VsAI)
         }
 
@@ -101,7 +61,7 @@ Item {
             color: Theme.green
             font.family: Theme.fontFamily
             font.pixelSize: 9
-            anchors.horizontalCenter: menuVsAiBtn.horizontalCenter
+            anchors.horizontalCenter: parent.horizontalCenter
         }
     }
 }

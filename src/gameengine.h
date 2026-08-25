@@ -25,6 +25,8 @@ class GameEngine : public QObject
     Q_PROPERTY(Player *winner READ winner NOTIFY winnerChanged)
     Q_PROPERTY(qreal wind READ wind WRITE setWind NOTIFY windChanged)
     Q_PROPERTY(QVariantList terrainHeights READ terrainHeights NOTIFY terrainChanged)
+    Q_PROPERTY(int boardWidth READ boardWidth CONSTANT)
+    Q_PROPERTY(int boardHeight READ boardHeight CONSTANT)
     Q_PROPERTY(bool projectileInFlight READ projectileInFlight NOTIFY projectileInFlightChanged)
     Q_PROPERTY(qreal projectileX READ projectileX NOTIFY projectilePositionChanged)
     Q_PROPERTY(qreal projectileY READ projectileY NOTIFY projectilePositionChanged)
@@ -51,9 +53,11 @@ public:
     static constexpr int BOARD_WIDTH = 800;
     static constexpr int BOARD_HEIGHT = 600;
     static constexpr int TERRAIN_COLUMNS = 100;
-    static constexpr int MAX_HEALTH = 100;
     static constexpr int HIT_DAMAGE = 50;
-    static constexpr qreal WIND_MAX = 60.0;
+    static constexpr qreal WIND_MAX = PhysicsEngine::WIND_MAX;
+    static constexpr qreal TANK_HALF_HEIGHT = 8.0;
+    static constexpr qreal PLAYER1_START_X = 0.14 * BOARD_WIDTH;
+    static constexpr qreal PLAYER2_START_X = 0.86 * BOARD_WIDTH;
 
     explicit GameEngine(QObject *parent = nullptr);
 
@@ -61,6 +65,8 @@ public:
 
     Phase phase() const;
     GameMode gameMode() const;
+    int boardWidth() const { return BOARD_WIDTH; }
+    int boardHeight() const { return BOARD_HEIGHT; }
     Player *player1() const;
     Player *player2() const;
     Player *currentPlayer() const;
@@ -111,10 +117,8 @@ private:
     Player *m_player2 = nullptr;
     Player *m_current = nullptr;
     Player *m_winner = nullptr;
-    int m_currentIndex = 0;
     qreal m_wind = 0.0;
     QVector<qreal> m_terrain;
-    QVariantList m_terrainList;
 
     PhysicsEngine m_physics;
     AIOpponent m_ai;

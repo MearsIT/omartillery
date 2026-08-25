@@ -29,9 +29,10 @@ ApplicationWindow {
     Item {
         id: viewport
         anchors.centerIn: parent
-        width: 800
-        height: 600
-        scale: Math.min(root.width / 800, root.height / 600)
+        width: GameEngine.boardWidth
+        height: GameEngine.boardHeight
+        scale: Math.min(root.width / GameEngine.boardWidth,
+                        root.height / GameEngine.boardHeight)
 
         StackView {
             id: stack

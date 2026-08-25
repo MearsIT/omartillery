@@ -1,4 +1,5 @@
 import QtQuick
+import ArtilleryDuel
 
 Item {
     id: tank
@@ -34,7 +35,7 @@ Item {
             width: 12
             height: 2
             radius: 0
-            color: "#505050"
+            color: Theme.dark
             x: tank.player.facing < 0 ? -12 : 0
             y: -1
         }

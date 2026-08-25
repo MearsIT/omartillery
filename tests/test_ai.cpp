@@ -4,6 +4,7 @@
 #include "gameengine.h"
 #include "physicsengine.h"
 #include "player.h"
+#include "testutils.h"
 
 #include <cmath>
 
@@ -156,15 +157,8 @@ void TestAI::engineIntegrationTakesAiTurn()
     QVERIFY(engine.projectileInFlight());
     QVERIFY(engine.player2()->isAI());
 
-    qreal t = 0.0;
-    while (engine.projectileInFlight() && t < 12.0) {
-        t += 1.0 / 60.0;
-        engine.updateFlight(t);
-    }
+    TestUtils::settleFlight(engine);
     QVERIFY(!engine.projectileInFlight());
-
-    if (engine.phase() == GameEngine::Phase::Player2Fire)
-        engine.explosionFinished();
 
     QVERIFY(engine.phase() == GameEngine::Phase::Player1Aim
             || engine.phase() == GameEngine::Phase::GameOver);

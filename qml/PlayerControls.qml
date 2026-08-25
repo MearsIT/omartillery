@@ -11,6 +11,38 @@ FocusScope {
         GameEngine.phase === GameEngine.Player1Aim
         || GameEngine.phase === GameEngine.Player2Aim
 
+    component AimSlider: Slider {
+        id: aimSlider
+
+        background: Rectangle {
+            x: aimSlider.leftPadding
+            y: aimSlider.topPadding + aimSlider.availableHeight / 2 - height / 2
+            width: aimSlider.availableWidth
+            height: 8
+            color: Theme.background
+            border.width: 2
+            border.color: Theme.dark
+
+            Rectangle {
+                width: aimSlider.visualPosition * parent.width
+                height: parent.height
+                color: Theme.green
+            }
+        }
+
+        handle: Rectangle {
+            x: aimSlider.leftPadding
+               + aimSlider.visualPosition
+                 * (aimSlider.availableWidth - width)
+            y: aimSlider.topPadding + aimSlider.availableHeight / 2 - height / 2
+            width: 16
+            height: 16
+            color: Theme.steel
+            border.width: 2
+            border.color: Theme.dark
+        }
+    }
+
     focus: interactive
     enabled: interactive
     implicitWidth: row.implicitWidth
@@ -71,7 +103,7 @@ FocusScope {
                 font.pixelSize: 11
             }
 
-            Slider {
+            AimSlider {
                 id: angleSlider
                 objectName: "angleSlider"
                 from: 0
@@ -79,36 +111,6 @@ FocusScope {
                 stepSize: 1
                 enabled: controls.enabled
                 onValueChanged: GameEngine.currentPlayer.angle = value
-
-                background: Rectangle {
-                    x: angleSlider.leftPadding
-                    y: angleSlider.topPadding
-                       + angleSlider.availableHeight / 2 - height / 2
-                    width: angleSlider.availableWidth
-                    height: 8
-                    color: Theme.background
-                    border.width: 2
-                    border.color: Theme.dark
-
-                    Rectangle {
-                        width: angleSlider.visualPosition * parent.width
-                        height: parent.height
-                        color: Theme.green
-                    }
-                }
-
-                handle: Rectangle {
-                    x: angleSlider.leftPadding
-                       + angleSlider.visualPosition
-                         * (angleSlider.availableWidth - width)
-                    y: angleSlider.topPadding
-                       + angleSlider.availableHeight / 2 - height / 2
-                    width: 16
-                    height: 16
-                    color: Theme.steel
-                    border.width: 2
-                    border.color: Theme.dark
-                }
 
                 Connections {
                     target: GameEngine.currentPlayer
@@ -130,7 +132,7 @@ FocusScope {
                 font.pixelSize: 11
             }
 
-            Slider {
+            AimSlider {
                 id: powerSlider
                 objectName: "powerSlider"
                 from: 0
@@ -138,36 +140,6 @@ FocusScope {
                 stepSize: 1
                 enabled: controls.enabled
                 onValueChanged: GameEngine.currentPlayer.power = value
-
-                background: Rectangle {
-                    x: powerSlider.leftPadding
-                    y: powerSlider.topPadding
-                       + powerSlider.availableHeight / 2 - height / 2
-                    width: powerSlider.availableWidth
-                    height: 8
-                    color: Theme.background
-                    border.width: 2
-                    border.color: Theme.dark
-
-                    Rectangle {
-                        width: powerSlider.visualPosition * parent.width
-                        height: parent.height
-                        color: Theme.green
-                    }
-                }
-
-                handle: Rectangle {
-                    x: powerSlider.leftPadding
-                       + powerSlider.visualPosition
-                         * (powerSlider.availableWidth - width)
-                    y: powerSlider.topPadding
-                       + powerSlider.availableHeight / 2 - height / 2
-                    width: 16
-                    height: 16
-                    color: Theme.steel
-                    border.width: 2
-                    border.color: Theme.dark
-                }
 
                 Connections {
                     target: GameEngine.currentPlayer
@@ -179,31 +151,12 @@ FocusScope {
             }
         }
 
-        Button {
+        RetroButton {
             id: fireButton
             objectName: "fireButton"
+            panelWidth: 120
             text: qsTr("FIRE")
             enabled: controls.enabled
-
-            background: Rectangle {
-                implicitWidth: 120
-                implicitHeight: 44
-                color: fireButton.pressed ? Theme.chrome : Theme.background
-                border.color: fireButton.enabled
-                               ? (fireButton.hovered ? Theme.accent : Theme.green)
-                               : Theme.dark
-                border.width: 3
-            }
-
-            contentItem: Text {
-                text: fireButton.text
-                color: fireButton.enabled ? Theme.accent : Theme.dark
-                font.family: Theme.fontFamily
-                font.pixelSize: 14
-                horizontalAlignment: Text.AlignHCenter
-                verticalAlignment: Text.AlignVCenter
-            }
-
             onClicked: GameEngine.fireProjectile()
         }
     }

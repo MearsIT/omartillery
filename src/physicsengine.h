@@ -27,8 +27,6 @@ public:
 
     QPointF positionAt(const QPointF &origin, qreal angleDeg, qreal power,
                        int facing, qreal wind, qreal t) const;
-    QPointF velocityAt(const QPointF &origin, qreal angleDeg, qreal power,
-                       int facing, qreal wind, qreal t) const;
 
     Q_INVOKABLE QList<QPointF> calculateTrajectory(const QPointF &origin,
                                                    qreal angleDeg, qreal power,

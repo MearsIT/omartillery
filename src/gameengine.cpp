@@ -87,7 +87,11 @@ qreal GameEngine::projectileTime() const
 
 QVariantList GameEngine::terrainHeights() const
 {
-    return m_terrainList;
+    QVariantList heights;
+    heights.reserve(m_terrain.size());
+    for (qreal height : std::as_const(m_terrain))
+        heights.append(height);
+    return heights;
 }
 
 void GameEngine::startGame(GameMode mode)
@@ -115,7 +119,6 @@ void GameEngine::startGame(GameMode mode)
     m_winner = nullptr;
     emit winnerChanged();
 
-    m_currentIndex = 0;
     m_current = m_player1;
     emit currentPlayerChanged();
 
@@ -138,7 +141,7 @@ void GameEngine::fireProjectile()
     const qreal angle = shooter->angle();
     const qreal radians = qDegreesToRadians(angle);
     const qreal dir = shooter->facing() < 0 ? -1.0 : 1.0;
-    const QPointF center(shooter->x(), shooter->y() - 8.0);
+    const QPointF center(shooter->x(), shooter->y() - TANK_HALF_HEIGHT);
     const QPointF muzzle(center.x() + dir * 12.0 * qCos(radians),
                          center.y() - 12.0 * qSin(radians));
 
@@ -152,7 +155,7 @@ void GameEngine::fireProjectile()
     m_projectilePos = muzzle;
     m_pendingDirectHit = false;
 
-    setPhase(m_currentIndex == 0 ? Phase::Player1Fire : Phase::Player2Fire);
+    setPhase(m_current == m_player1 ? Phase::Player1Fire : Phase::Player2Fire);
 
     m_projectileInFlight = true;
     emit projectileInFlightChanged();
@@ -177,8 +180,8 @@ void GameEngine::updateFlight(qreal elapsedSeconds)
         return;
     }
 
-    Player *opponent = m_currentIndex == 0 ? m_player2 : m_player1;
-    const QPointF boxCenter(opponent->x(), opponent->y() - 8.0);
+    Player *opponent = m_current == m_player1 ? m_player2 : m_player1;
+    const QPointF boxCenter(opponent->x(), opponent->y() - TANK_HALF_HEIGHT);
 
     for (int step = 1; step <= 4; ++step) {
         const qreal t = m_prevFlightTime
@@ -235,10 +238,10 @@ void GameEngine::aiTakeShot()
         return;
 
     Player *shooter = m_current;
-    Player *target = m_currentIndex == 0 ? m_player2 : m_player1;
+    Player *target = m_current == m_player1 ? m_player2 : m_player1;
 
-    const QPointF origin(shooter->x(), shooter->y() - 8.0);
-    const QPointF aimPoint(target->x(), target->y() - 8.0);
+    const QPointF origin(shooter->x(), shooter->y() - TANK_HALF_HEIGHT);
+    const QPointF aimPoint(target->x(), target->y() - TANK_HALF_HEIGHT);
     const QPointF shot = m_ai.calculateShotWithError(origin, aimPoint,
                                                      shooter->facing(), m_wind,
                                                      terrainHeightAt(target->x()));
@@ -295,16 +298,15 @@ void GameEngine::setPhase(Phase phase)
 
 void GameEngine::advanceTurn()
 {
-    m_currentIndex = 1 - m_currentIndex;
-    m_current = m_currentIndex == 0 ? m_player1 : m_player2;
+    m_current = m_current == m_player1 ? m_player2 : m_player1;
     emit currentPlayerChanged();
 
     randomizeWind();
 
-    if (m_mode == GameMode::VsAI && m_currentIndex == 1)
+    if (m_mode == GameMode::VsAI && m_current == m_player2)
         setPhase(Phase::AITurn);
     else
-        setPhase(m_currentIndex == 0 ? Phase::Player1Aim : Phase::Player2Aim);
+        setPhase(m_current == m_player1 ? Phase::Player1Aim : Phase::Player2Aim);
 }
 
 void GameEngine::randomizeWind()
@@ -327,26 +329,20 @@ void GameEngine::generateTerrain()
     }
 
     const qreal columnWidth = qreal(BOARD_WIDTH) / TERRAIN_COLUMNS;
-    const qreal pad1X = 0.14 * BOARD_WIDTH;
-    const qreal pad2X = 0.86 * BOARD_WIDTH;
-    const int pad1 = int(pad1X / columnWidth);
-    const int pad2 = int(pad2X / columnWidth);
+    const int pad1 = int(PLAYER1_START_X / columnWidth);
+    const int pad2 = int(PLAYER2_START_X / columnWidth);
     for (int i = pad1 - 2; i <= pad1 + 2; ++i)
         m_terrain[i] = m_terrain.at(pad1);
     for (int i = pad2 - 2; i <= pad2 + 2; ++i)
         m_terrain[i] = m_terrain.at(pad2);
 
-    m_terrainList.clear();
-    m_terrainList.reserve(TERRAIN_COLUMNS);
-    for (qreal height : std::as_const(m_terrain))
-        m_terrainList.append(height);
     emit terrainChanged();
 }
 
 void GameEngine::positionPlayers()
 {
-    const qreal x1 = 0.14 * BOARD_WIDTH;
-    const qreal x2 = 0.86 * BOARD_WIDTH;
-    m_player1->setPosition(QPointF(x1, terrainHeightAt(x1)));
-    m_player2->setPosition(QPointF(x2, terrainHeightAt(x2)));
+    m_player1->setPosition(QPointF(PLAYER1_START_X,
+                                   terrainHeightAt(PLAYER1_START_X)));
+    m_player2->setPosition(QPointF(PLAYER2_START_X,
+                                   terrainHeightAt(PLAYER2_START_X)));
 }

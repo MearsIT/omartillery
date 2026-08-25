@@ -4,17 +4,14 @@ import ArtilleryDuel
 Item {
     id: board
 
-    readonly property int boardWidth: 800
-    readonly property int boardHeight: 600
-
-    width: boardWidth
-    height: boardHeight
+    width: GameEngine.boardWidth
+    height: GameEngine.boardHeight
     clip: true
 
     Rectangle {
         id: sky
         anchors.fill: parent
-        color: "#40318D"
+        color: Theme.background
     }
 
     Canvas {

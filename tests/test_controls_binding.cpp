@@ -2,6 +2,7 @@
 
 #include "gameengine.h"
 #include "player.h"
+#include "testutils.h"
 
 #include <QQmlComponent>
 #include <QQmlEngine>
@@ -22,8 +23,9 @@ private slots:
 
 private:
     QQuickItem *createControls(QQmlEngine &qmlEngine, QScopedPointer<QObject> &root);
-    GameEngine *engineSingleton(QQmlEngine &qmlEngine);
 };
+
+using TestUtils::engineSingleton;
 
 QQuickItem *TestControlsBinding::createControls(QQmlEngine &qmlEngine,
                                                 QScopedPointer<QObject> &root)
@@ -34,14 +36,6 @@ QQuickItem *TestControlsBinding::createControls(QQmlEngine &qmlEngine,
         return nullptr;
     root.reset(component.create());
     return qobject_cast<QQuickItem *>(root.get());
-}
-
-GameEngine *TestControlsBinding::engineSingleton(QQmlEngine &qmlEngine)
-{
-    const int typeId = qmlTypeId("ArtilleryDuel", 1, 0, "GameEngine");
-    if (typeId < 0)
-        return nullptr;
-    return qmlEngine.singletonInstance<GameEngine *>(typeId);
 }
 
 void TestControlsBinding::slidersUpdateEngine()

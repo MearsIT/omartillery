@@ -1,4 +1,5 @@
 #include "player.h"
+#include "physicsengine.h"
 
 Player::Player(const QString &name, QObject *parent)
     : QObject(parent), m_name(name)
@@ -55,7 +56,7 @@ qreal Player::angle() const
 
 void Player::setAngle(qreal angle)
 {
-    const qreal clamped = qBound(0.0, angle, 90.0);
+    const qreal clamped = PhysicsEngine::clampAngle(angle);
     if (qFuzzyIsNull(m_angle - clamped))
         return;
     m_angle = clamped;
@@ -69,7 +70,7 @@ qreal Player::power() const
 
 void Player::setPower(qreal power)
 {
-    const qreal clamped = qBound(0.0, power, 100.0);
+    const qreal clamped = PhysicsEngine::clampPower(power);
     if (qFuzzyIsNull(m_power - clamped))
         return;
     m_power = clamped;

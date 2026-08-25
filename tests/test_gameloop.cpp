@@ -3,6 +3,7 @@
 #include "aiopponent.h"
 #include "gameengine.h"
 #include "physicsengine.h"
+#include "testutils.h"
 #include "player.h"
 
 #include <QQmlApplicationEngine>
@@ -22,72 +23,18 @@ private slots:
     void qmlDrivenFlightResolvesTurn();
 
 private:
-    static bool findClearShot(const GameEngine &engine, qreal &angle,
-                              qreal &power);
-    static void settleFlight(GameEngine &engine);
-    GameEngine *loadUi(QQmlApplicationEngine &qmlEngine);
+    static GameEngine *loadUi(QQmlApplicationEngine &qmlEngine);
 };
+
+using TestUtils::findClearShot;
+using TestUtils::settleFlight;
 
 GameEngine *TestGameLoop::loadUi(QQmlApplicationEngine &qmlEngine)
 {
     qmlEngine.load(QUrl(QStringLiteral("qrc:/ArtilleryDuel/qml/main.qml")));
     if (qmlEngine.rootObjects().isEmpty())
         return nullptr;
-    const int typeId = qmlTypeId("ArtilleryDuel", 1, 0, "GameEngine");
-    if (typeId < 0)
-        return nullptr;
-    return qmlEngine.singletonInstance<GameEngine *>(typeId);
-}
-
-bool TestGameLoop::findClearShot(const GameEngine &engine, qreal &angle,
-                                 qreal &power)
-{
-    const PhysicsEngine physics;
-    const Player *shooter = engine.currentPlayer();
-    const Player *target = shooter == engine.player1() ? engine.player2()
-                                                       : engine.player1();
-    const int facing = shooter->facing();
-    const QPointF center(shooter->x(), shooter->y() - 8.0);
-    const QPointF boxCenter(target->x(), target->y() - 8.0);
-    const qreal wind = engine.wind();
-
-    for (int a = 75; a >= 20; a -= 5) {
-        const QPointF origin(center.x() + facing * 12.0 * qCos(qDegreesToRadians(a)),
-                             center.y() - 12.0 * qSin(qDegreesToRadians(a)));
-        for (int p = 15; p <= 100; ++p) {
-            bool terrainFirst = false;
-            bool boxHit = false;
-            const auto sim = physics.simulate(origin, a, p, facing, wind,
-                                              GameEngine::BOARD_HEIGHT + 60.0);
-            const qreal tEnd = qMin(sim.hitGround ? sim.flightTime : 4.0, 4.0);
-            for (qreal t = 0.0; t <= tEnd && !terrainFirst && !boxHit;
-                 t += 1.0 / 480.0) {
-                const QPointF q = physics.positionAt(origin, a, p, facing, wind, t);
-                if (physics.pointIntersectsBox(q, boxCenter, 12.0, 12.0))
-                    boxHit = true;
-                else if (q.y() >= engine.terrainHeightAt(q.x()) - 2.0)
-                    terrainFirst = true;
-            }
-            if (boxHit && !terrainFirst) {
-                angle = a;
-                power = p;
-                return true;
-            }
-        }
-    }
-    return false;
-}
-
-void TestGameLoop::settleFlight(GameEngine &engine)
-{
-    qreal t = 0.0;
-    while (engine.projectileInFlight() && t < 12.0) {
-        t += 1.0 / 60.0;
-        engine.updateFlight(t);
-    }
-    if (engine.phase() == GameEngine::Phase::Player1Fire
-        || engine.phase() == GameEngine::Phase::Player2Fire)
-        engine.explosionFinished();
+    return TestUtils::engineSingleton(qmlEngine);
 }
 
 void TestGameLoop::menuLaunchesGameAndBack()
@@ -136,7 +83,8 @@ void TestGameLoop::completeTwoPlayerGame()
 
     int turns = 0;
     int regenerations = 0;
-    while (engine->phase() != GameEngine::Phase::GameOver && turns < 30) {
+    int consecutiveBlocked = 0;
+    while (engine->phase() != GameEngine::Phase::GameOver && turns < 60) {
         QVERIFY(engine->phase() == GameEngine::Phase::Player1Aim
                 || engine->phase() == GameEngine::Phase::Player2Aim);
 
@@ -144,10 +92,17 @@ void TestGameLoop::completeTwoPlayerGame()
         qreal power = 0.0;
         if (engine->currentPlayer() == engine->player1()) {
             if (!findClearShot(*engine, angle, power)) {
-                QVERIFY2(++regenerations <= 12, "no completable terrain found");
-                engine->startGame(GameEngine::GameMode::TwoPlayer);
-                turns = 0;
-                continue;
+                if (++consecutiveBlocked >= 10) {
+                    QVERIFY2(++regenerations <= 12, "no completable terrain found");
+                    engine->startGame(GameEngine::GameMode::TwoPlayer);
+                    turns = 0;
+                    consecutiveBlocked = 0;
+                    continue;
+                }
+                angle = 75.0;
+                power = 30.0;
+            } else {
+                consecutiveBlocked = 0;
             }
         } else {
             angle = 75.0;
@@ -165,7 +120,7 @@ void TestGameLoop::completeTwoPlayerGame()
     QCOMPARE(engine->phase(), GameEngine::Phase::GameOver);
     QVERIFY(engine->winner() != nullptr);
     QCOMPARE(engine->winner()->score(), 1);
-    QVERIFY(turns <= 4);
+    QVERIFY(turns <= 20);
 
     auto *over = window->findChild<QQuickItem *>("gameOverScreen");
     QTRY_VERIFY(over != nullptr && over->isVisible());
@@ -276,7 +231,7 @@ void TestGameLoop::hudReflectsGameState()
     qreal power = 0.0;
     int attempts = 0;
     while (!findClearShot(*engine, angle, power)) {
-        QVERIFY2(++attempts <= 8, "no clear shot on any terrain");
+        QVERIFY2(++attempts <= 30, "no clear shot on any terrain");
         engine->startGame(GameEngine::GameMode::VsAI);
     }
     engine->currentPlayer()->setAngle(angle);

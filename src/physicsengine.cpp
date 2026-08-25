@@ -28,21 +28,6 @@ QPointF PhysicsEngine::positionAt(const QPointF &origin, qreal angleDeg,
     return QPointF(x, y);
 }
 
-QPointF PhysicsEngine::velocityAt(const QPointF &origin, qreal angleDeg,
-                                  qreal power, int facing, qreal wind,
-                                  qreal t) const
-{
-    Q_UNUSED(origin);
-    const qreal angle = qDegreesToRadians(clampAngle(angleDeg));
-    const qreal speed = launchSpeed(power);
-    const qreal dir = facing < 0 ? -1.0 : 1.0;
-    const qreal w = qBound(-WIND_MAX, wind, WIND_MAX);
-
-    const qreal vx = dir * speed * qCos(angle) + w * t;
-    const qreal vy = -(speed * qSin(angle)) + GRAVITY * t;
-    return QPointF(vx, vy);
-}
-
 QList<QPointF> PhysicsEngine::calculateTrajectory(const QPointF &origin,
                                                   qreal angleDeg, qreal power,
                                                   int facing, qreal wind) const

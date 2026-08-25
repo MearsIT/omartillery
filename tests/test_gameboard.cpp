@@ -2,6 +2,7 @@
 
 #include "gameengine.h"
 #include "player.h"
+#include "testutils.h"
 
 #include <QImage>
 #include <QQmlApplicationEngine>
@@ -19,16 +20,9 @@ private slots:
     void rendersTerrainAndSky();
 
 private:
-    static GameEngine *engineSingleton(QQmlEngine &engine);
 };
 
-GameEngine *TestGameBoard::engineSingleton(QQmlEngine &engine)
-{
-    const int typeId = qmlTypeId("ArtilleryDuel", 1, 0, "GameEngine");
-    if (typeId < 0)
-        return nullptr;
-    return engine.singletonInstance<GameEngine *>(typeId);
-}
+using TestUtils::engineSingleton;
 
 void TestGameBoard::tanksFollowPlayerCoordinates()
 {
@@ -72,9 +66,7 @@ void TestGameBoard::rendersTerrainAndSky()
     auto *window = qobject_cast<QQuickWindow *>(engine.rootObjects().first());
     QVERIFY(window != nullptr);
 
-    const int typeId = qmlTypeId("ArtilleryDuel", 1, 0, "GameEngine");
-    auto *gameEngine = typeId >= 0
-            ? engine.singletonInstance<GameEngine *>(typeId) : nullptr;
+    auto *gameEngine = engineSingleton(engine);
     QVERIFY2(gameEngine != nullptr, "GameEngine singleton unavailable");
     gameEngine->startGame(GameEngine::GameMode::TwoPlayer);
 
