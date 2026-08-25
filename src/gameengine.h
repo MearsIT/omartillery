@@ -105,7 +105,7 @@ signals:
 private:
     void setPhase(Phase phase);
     void advanceTurn();
-    void randomizeWind();
+    void randomizeWind(bool useFullRange = false);
     void generateTerrain();
     void positionPlayers();
     void impactAt(const QPointF &point, bool directHit);
