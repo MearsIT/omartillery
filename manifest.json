@@ -8,6 +8,6 @@
   "description": "Turn-based artillery combat game - retro C64 recreation with physics-based projectile motion",
   "kinds": ["bar-widget"],
   "entryPoints": {
-    "bar-widget": "BarWidget.qml"
+    "barWidget": "BarWidget.qml"
   }
 }
