@@ -11,7 +11,7 @@ Image {
     width: 8
     height: 8
     smooth: false
-    visible: GameEngine.projectileInFlight
-    x: GameEngine.projectileX - width / 2
-    y: GameEngine.projectileY - height / 2
+    visible: GameModel.projectileInFlight
+    x: GameModel.projectileX - width / 2
+    y: GameModel.projectileY - height / 2
 }

@@ -11,18 +11,18 @@ An Omarchy plugin bringing classic turn-based artillery combat to your desktop s
 ### From Source Repository
 
 ```sh
-omarchy plugin add https://github.com/jandal/artillery-duel
+omarchy plugin add https://github.com/MearsIT/omartillery
 ```
 
 ### Manual Installation
 
-1. Clone or copy this repository to `~/.config/omarchy/plugins/io.github.jandal.artillery-duel/`
+1. Clone or copy this repository to `~/.config/omarchy/plugins/omartillery/`
 2. Enable the plugin by adding it to `~/.config/omarchy/shell.json`:
 
 ```json
 {
   "plugins": {
-    "io.github.jandal.artillery-duel": {
+    "omartillery": {
       "enabled": true
     }
   }
@@ -40,19 +40,19 @@ omarchy-shell shell rescanPlugins
 ### Summon the Game Panel
 
 ```sh
-omarchy-shell shell summon io.github.jandal.artillery-duel '{}'
+omarchy-shell shell summon omartillery '{}'
 ```
 
 ### Hide the Panel
 
 ```sh
-omarchy-shell shell hide io.github.jandal.artillery-duel
+omarchy-shell shell hide omartillery
 ```
 
 ### Toggle Visibility
 
 ```sh
-omarchy-shell shell toggle io.github.jandal.artillery-duel '{}'
+omarchy-shell shell toggle omartillery '{}'
 ```
 
 You can bind these commands to keyboard shortcuts in your Omarchy configuration.
@@ -97,39 +97,39 @@ The game degrades gracefully and plays silently if audio libraries are missing.
 
 ## Development
 
-### Building the QML Extension Plugin
+### Pure QML/JavaScript Plugin
 
-```sh
-cmake -B build -G Ninja
-cmake --build build
-```
-
-This builds `libartillery_core.so` — the QML extension plugin that Omarchy shell loads.
-
-### Testing
-
-```sh
-ctest --test-dir build --output-on-failure
-```
+Omartillery is a **pure QML and JavaScript plugin** with no compilation required. All game logic is implemented in `GameModel.qml` - no C++ code, no build step, just install and run.
 
 ### Validation
 
-Validate plugin structure and manifest:
-
 ```sh
-omarchy plugin validate
+# Validate plugin structure
+omarchy plugin validate .
 
-# Lint QML files
-qmllint qml/*.qml
+# Lint QML files  
+qmllint *.qml qml/*.qml
 ```
 
+### Testing Changes
+
+After making changes:
+
+```sh
+# Reinstall
+omarchy plugin add https://github.com/MearsIT/omartillery --force
+omarchy-shell shell rescanPlugins
+
+# Launch
+omarchy-shell shell summon omartillery '{}'
+```
 ## Project Structure
 
 ```
 manifest.json           Plugin metadata and entry points
 Panel.qml              Main panel component (entry point)
 qml/                   QML UI components
-src/                   C++ game logic (engine, physics, AI) built as QML extension
+GameModel.qml          Pure JavaScript game engine (singleton)
 assets/                Pixel-art sprites, sounds, fonts
 LICENSE                MIT License
 ```

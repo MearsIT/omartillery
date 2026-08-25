@@ -52,24 +52,24 @@ Rectangle {
     }
 
     function phaseLabel() {
-        switch (GameEngine.phase) {
-        case GameEngine.Player1Aim:
-            return GameEngine.player1.name + ": AIM & FIRE";
-        case GameEngine.Player1Fire:
-            return GameEngine.player1.name + ": FIRING";
-        case GameEngine.Player2Aim:
-            return GameEngine.player2.name + ": AIM & FIRE";
-        case GameEngine.Player2Fire:
-            return GameEngine.player2.name + ": FIRING";
-        case GameEngine.AITurn:
-            return GameEngine.player2.name + " CALCULATING";
+        switch (GameModel.phase) {
+        case GameModel.Player1Aim:
+            return GameModel.player1.name + ": AIM & FIRE";
+        case GameModel.Player1Fire:
+            return GameModel.player1.name + ": FIRING";
+        case GameModel.Player2Aim:
+            return GameModel.player2.name + ": AIM & FIRE";
+        case GameModel.Player2Fire:
+            return GameModel.player2.name + ": FIRING";
+        case GameModel.AITurn:
+            return GameModel.player2.name + " CALCULATING";
         default:
             return "";
         }
     }
 
     function windArrows() {
-        const wind = GameEngine.wind;
+        const wind = GameModel.wind;
         const count = Math.max(1, Math.round(Math.abs(wind) / 15));
         const glyph = wind > 0 ? ">" : "<";
         return glyph.repeat(count);
@@ -81,7 +81,7 @@ Rectangle {
             leftMargin: 10
             verticalCenter: parent.verticalCenter
         }
-        player: GameEngine.player1
+        player: GameModel.player1
     }
 
     Column {
@@ -98,10 +98,10 @@ Rectangle {
 
         Text {
             objectName: "hudWindLabel"
-            text: GameEngine.wind === 0
+            text: GameModel.wind === 0
                   ? qsTr("WIND CALM")
                   : qsTr("WIND ") + hud.windArrows() + " "
-                    + Math.abs(Math.round(GameEngine.wind))
+                    + Math.abs(Math.round(GameModel.wind))
             color: Theme.green
             font.family: Theme.fontFamily
             font.pixelSize: 10
@@ -114,7 +114,7 @@ Rectangle {
             rightMargin: 10
             verticalCenter: parent.verticalCenter
         }
-        player: GameEngine.player2
+        player: GameModel.player2
         mirrored: true
     }
 }

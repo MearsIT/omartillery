@@ -1,0 +1,2 @@
+module omartillery
+singleton GameModel 1.0 GameModel.qml

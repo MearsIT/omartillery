@@ -48,14 +48,14 @@ Item {
             objectName: "twoPlayerButton"
             text: qsTr("2 PLAYER")
             anchors.horizontalCenter: parent.horizontalCenter
-            onClicked: GameEngine.startGame(GameEngine.TwoPlayer)
+            onClicked: GameModel.startGame(GameModel.TwoPlayer)
         }
 
         RetroButton {
             objectName: "vsAiButton"
             text: qsTr("VS COMPUTER")
             anchors.horizontalCenter: parent.horizontalCenter
-            onClicked: GameEngine.startGame(GameEngine.VsAI)
+            onClicked: GameModel.startGame(GameModel.VsAI)
         }
 
         Text {

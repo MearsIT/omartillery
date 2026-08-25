@@ -27,7 +27,7 @@ Item {
 
         Text {
             objectName: "winnerLabel"
-            text: (GameEngine.winner ? GameEngine.winner.name : "") + " WINS"
+            text: (GameModel.winner ? GameModel.winner.name : "") + " WINS"
             color: Theme.accent
             font.family: Theme.fontFamily
             font.pixelSize: 18
@@ -36,7 +36,7 @@ Item {
 
         Text {
             objectName: "scoreLabel"
-            text: GameEngine.player1.score + "  -  " + GameEngine.player2.score
+            text: GameModel.player1.score + "  -  " + GameModel.player2.score
             color: Theme.green
             font.family: Theme.fontFamily
             font.pixelSize: 14
@@ -49,14 +49,14 @@ Item {
             objectName: "playAgainButton"
             text: qsTr("PLAY AGAIN")
             anchors.horizontalCenter: parent.horizontalCenter
-            onClicked: GameEngine.startGame(GameEngine.gameMode)
+            onClicked: GameModel.startGame(GameModel.gameMode)
         }
 
         RetroButton {
             objectName: "menuButton"
             text: qsTr("MAIN MENU")
             anchors.horizontalCenter: parent.horizontalCenter
-            onClicked: GameEngine.returnToMenu()
+            onClicked: GameModel.returnToMenu()
         }
     }
 }

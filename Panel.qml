@@ -49,10 +49,10 @@ Item {
         Item {
             id: viewport
             anchors.centerIn: parent
-            width: GameEngine.boardWidth
-            height: GameEngine.boardHeight
-            scale: Math.min(parent.width / GameEngine.boardWidth,
-                            parent.height / GameEngine.boardHeight)
+            width: GameModel.boardWidth
+            height: GameModel.boardHeight
+            scale: Math.min(parent.width / GameModel.boardWidth,
+                            parent.height / GameModel.boardHeight)
 
             StackView {
                 id: stack
@@ -63,7 +63,7 @@ Item {
             Timer {
                 id: aiThinkTimer
                 interval: 900
-                onTriggered: GameEngine.aiTakeShot()
+                onTriggered: GameModel.aiTakeShot()
             }
 
             Connections {
@@ -78,19 +78,19 @@ Item {
                 }
 
                 function onPhaseChanged() {
-                    const phase = GameEngine.phase;
+                    const phase = GameModel.phase;
                     const current = stack.currentItem ? stack.currentItem.objectName
                                                       : "";
-                    if (phase === GameEngine.Menu) {
+                    if (phase === GameModel.Menu) {
                         if (current !== "mainMenu")
                             stack.replace(mainMenu);
-                    } else if (phase === GameEngine.GameOver) {
+                    } else if (phase === GameModel.GameOver) {
                         if (current !== "gameOverScreen")
                             stack.replace(gameOver);
                     } else if (current !== "gamePage") {
                         stack.replace(gamePage);
                     }
-                    if (phase === GameEngine.AITurn)
+                    if (phase === GameModel.AITurn)
                         aiThinkTimer.restart();
                 }
             }

@@ -6,8 +6,8 @@ import omartillery
 Item {
     id: board
 
-    width: GameEngine.boardWidth
-    height: GameEngine.boardHeight
+    width: GameModel.boardWidth
+    height: GameModel.boardHeight
     clip: true
 
     Rectangle {
@@ -24,7 +24,7 @@ Item {
         onPaint: {
             const ctx = getContext("2d");
             ctx.reset();
-            const heights = GameEngine.terrainHeights;
+            const heights = GameModel.terrainHeights;
             if (heights.length === 0)
                 return;
 
@@ -54,11 +54,11 @@ Item {
     }
 
     Tank {
-        player: GameEngine.player1
+        player: GameModel.player1
     }
 
     Tank {
-        player: GameEngine.player2
+        player: GameModel.player2
     }
 
     Projectile {}
@@ -75,11 +75,11 @@ Item {
             }
         }
 
-        onDone: GameEngine.explosionFinished()
+        onDone: GameModel.explosionFinished()
     }
 
     FrameAnimation {
-        running: GameEngine.projectileInFlight
-        onTriggered: GameEngine.updateFlight(GameEngine.projectileTime + frameTime)
+        running: GameModel.projectileInFlight
+        onTriggered: GameModel.updateFlight(GameModel.projectileTime + frameTime)
     }
 }
