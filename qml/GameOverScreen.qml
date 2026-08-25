@@ -1,5 +1,7 @@
+pragma ModuleName: "omartillery"
+
 import QtQuick
-import ArtilleryDuel
+import omartillery
 
 Item {
     id: over

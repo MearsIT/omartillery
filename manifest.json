@@ -1,0 +1,13 @@
+{
+  "schemaVersion": 1,
+  "id": "io.github.jandal.artillery-duel",
+  "name": "Artillery Duel",
+  "version": "0.1.0",
+  "author": "Martin Mears",
+  "license": "MIT",
+  "description": "Turn-based artillery combat game - retro C64 recreation with physics-based projectile motion",
+  "kinds": ["panel"],
+  "entryPoints": {
+    "panel": "Panel.qml"
+  }
+}

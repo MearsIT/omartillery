@@ -15,19 +15,19 @@ set_source_files_properties(qml/Theme.qml PROPERTIES
     QT_QML_SINGLETON_TYPE TRUE
 )
 
-qt_add_library(artillery_core STATIC)
+qt_add_library(artillery_core SHARED)
 qt_add_qml_module(artillery_core
-    URI ArtilleryDuel
+    URI io.github.jandal.artillery-duel
     VERSION 1.0
     RESOURCE_PREFIX /
-    OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/ArtilleryDuel
+    OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/io/github/jandal/artillery-duel
     SOURCES
         src/player.h src/player.cpp
         src/gameengine.h src/gameengine.cpp
         src/physicsengine.h src/physicsengine.cpp
         src/aiopponent.h src/aiopponent.cpp
     QML_FILES
-        qml/main.qml
+        Panel.qml
         qml/GameBoard.qml
         qml/Tank.qml
         qml/PlayerControls.qml
@@ -38,31 +38,12 @@ qt_add_qml_module(artillery_core
         qml/GameOverScreen.qml
         qml/Theme.qml
         qml/RetroButton.qml
-    RESOURCES
-        assets/tank_left.png
-        assets/tank_right.png
-        assets/terrain_pattern.png
-        assets/projectile.png
-        assets/explosion_frames.png
-        assets/fonts/c64_font.ttf
-        assets/fonts/OFL.txt
-        assets/sounds/fire.wav
-        assets/sounds/explosion.wav
 )
 
 target_include_directories(artillery_core PUBLIC src)
 target_link_libraries(artillery_core PUBLIC Qt6::Quick Qt6::QuickControls2 Qt6::Multimedia)
 
-qt_add_executable(artillery-duel src/main.cpp)
-target_link_libraries(artillery-duel PRIVATE artillery_core artillery_coreplugin)
-
 include(CTest)
 if(BUILD_TESTING)
     add_subdirectory(tests)
 endif()
-
-install(TARGETS artillery-duel
-    BUNDLE DESTINATION .
-    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-)

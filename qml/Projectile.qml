@@ -1,11 +1,13 @@
+pragma ModuleName: "omartillery"
+
 import QtQuick
-import ArtilleryDuel
+import omartillery
 
 Image {
     id: projectile
 
     objectName: "projectile"
-    source: "qrc:/ArtilleryDuel/assets/projectile.png"
+    source: "assets/projectile.png"
     width: 8
     height: 8
     smooth: false

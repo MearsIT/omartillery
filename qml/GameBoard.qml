@@ -1,5 +1,7 @@
+pragma ModuleName: "omartillery"
+
 import QtQuick
-import ArtilleryDuel
+import omartillery
 
 Item {
     id: board
@@ -38,7 +40,7 @@ Item {
             ctx.fillStyle = "#8B5429";
             ctx.fill();
             ctx.fillStyle = ctx.createPattern(
-                        "qrc:/ArtilleryDuel/assets/terrain_pattern.png",
+                        "assets/terrain_pattern.png",
                         "repeat");
             ctx.fill();
             ctx.fillStyle = "#574200";

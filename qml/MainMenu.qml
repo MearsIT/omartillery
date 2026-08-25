@@ -1,6 +1,8 @@
+pragma ModuleName: "omartillery"
+
 import QtQuick
 import QtQuick.Controls
-import ArtilleryDuel
+import omartillery
 
 Item {
     id: menu

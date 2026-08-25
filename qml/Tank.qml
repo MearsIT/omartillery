@@ -1,5 +1,7 @@
+pragma ModuleName: "omartillery"
+
 import QtQuick
-import ArtilleryDuel
+import omartillery
 
 Item {
     id: tank
@@ -16,8 +18,8 @@ Item {
     Image {
         anchors.fill: parent
         source: tank.player.facing < 0
-                ? "qrc:/ArtilleryDuel/assets/tank_left.png"
-                : "qrc:/ArtilleryDuel/assets/tank_right.png"
+                ? "assets/tank_left.png"
+                : "assets/tank_right.png"
         smooth: false
         fillMode: Image.Pad
     }
