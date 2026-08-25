@@ -66,7 +66,7 @@ Item {
             }
 
             Connections {
-                target: GameEngine
+                target: GameModel
 
                 function onProjectileFired() {
                     fireSound.play();
