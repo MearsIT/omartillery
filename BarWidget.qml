@@ -56,7 +56,7 @@ BarWidget {
     id: button
     anchors.fill: parent
     bar: root.bar
-    text: "🎮"
+    text: "ART"
     horizontalMargin: 8.5
     tooltipText: "Artillery Duel"
     onPressed: function(buttonCode) {
