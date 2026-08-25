@@ -33,6 +33,7 @@ QtObject {
     property var winner: null
     property real wind: 0.0
     property var terrain: []
+    readonly property alias terrainHeights: root.terrain
     property bool projectileInFlight: false
     property real projectileX: 0
     property real projectileY: 0

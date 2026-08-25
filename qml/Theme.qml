@@ -4,7 +4,7 @@ import QtQuick
 
 QtObject {
     readonly property FontLoader fontLoader: FontLoader {
-        source: "assets/fonts/c64_font.ttf"
+        source: "../assets/fonts/c64_font.ttf"
     }
 
     readonly property string fontFamily: fontLoader.name

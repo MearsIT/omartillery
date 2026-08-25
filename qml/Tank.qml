@@ -17,8 +17,8 @@ Item {
     Image {
         anchors.fill: parent
         source: tank.player.facing < 0
-                ? "assets/tank_left.png"
-                : "assets/tank_right.png"
+                ? "../assets/tank_left.png"
+                : "../assets/tank_right.png"
         smooth: false
         fillMode: Image.Pad
     }

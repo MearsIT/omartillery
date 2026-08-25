@@ -6,7 +6,7 @@ Image {
     id: projectile
 
     objectName: "projectile"
-    source: "assets/projectile.png"
+    source: "../assets/projectile.png"
     width: 8
     height: 8
     smooth: false

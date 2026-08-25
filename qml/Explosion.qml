@@ -5,7 +5,7 @@ AnimatedSprite {
     id: explosion
 
     objectName: "explosion"
-    source: "assets/explosion_frames.png"
+    source: "../assets/explosion_frames.png"
     frameWidth: 32
     frameHeight: 32
     frameCount: 4

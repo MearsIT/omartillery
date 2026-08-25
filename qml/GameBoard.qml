@@ -39,7 +39,7 @@ Item {
             ctx.fillStyle = "#8B5429";
             ctx.fill();
             ctx.fillStyle = ctx.createPattern(
-                        "assets/terrain_pattern.png",
+                        "../assets/terrain_pattern.png",
                         "repeat");
             ctx.fill();
             ctx.fillStyle = "#574200";
