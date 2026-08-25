@@ -20,6 +20,7 @@ qt_add_qml_module(artillery_core
     SOURCES
         src/player.h src/player.cpp
         src/gameengine.h src/gameengine.cpp
+        src/physicsengine.h src/physicsengine.cpp
     QML_FILES
         qml/main.qml
 )

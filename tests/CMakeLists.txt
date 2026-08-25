@@ -6,3 +6,4 @@ function(add_qt_test name)
 endfunction()
 
 add_qt_test(test_gameengine)
+add_qt_test(test_physics)
