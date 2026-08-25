@@ -1,0 +1,64 @@
+import QtQuick
+import ArtilleryDuel
+
+Item {
+    id: board
+
+    readonly property int boardWidth: 800
+    readonly property int boardHeight: 600
+
+    width: boardWidth
+    height: boardHeight
+    clip: true
+
+    Rectangle {
+        id: sky
+        anchors.fill: parent
+        color: "#40318D"
+    }
+
+    Canvas {
+        id: terrainCanvas
+        anchors.fill: parent
+        antialiasing: false
+
+        onPaint: {
+            const ctx = getContext("2d");
+            ctx.reset();
+            const heights = GameEngine.terrainHeights;
+            if (heights.length === 0)
+                return;
+
+            const columnWidth = width / heights.length;
+            ctx.beginPath();
+            for (let i = 0; i < heights.length; ++i) {
+                const groundY = heights[i];
+                ctx.fillStyle = "#94E089";
+                ctx.fillRect(i * columnWidth, groundY, columnWidth + 0.5, 3);
+                ctx.rect(i * columnWidth, groundY + 3, columnWidth + 0.5,
+                         height - groundY - 3);
+            }
+            ctx.fillStyle = "#8B5429";
+            ctx.fill();
+            ctx.fillStyle = ctx.createPattern(
+                        "qrc:/ArtilleryDuel/assets/terrain_pattern.png",
+                        "repeat");
+            ctx.fill();
+            ctx.fillStyle = "#574200";
+            ctx.fillRect(0, height - 24, width, 24);
+        }
+
+        Connections {
+            target: GameEngine
+            function onTerrainChanged() { terrainCanvas.requestPaint(); }
+        }
+    }
+
+    Tank {
+        player: GameEngine.player1
+    }
+
+    Tank {
+        player: GameEngine.player2
+    }
+}

@@ -23,6 +23,12 @@ qt_add_qml_module(artillery_core
         src/physicsengine.h src/physicsengine.cpp
     QML_FILES
         qml/main.qml
+        qml/GameBoard.qml
+        qml/Tank.qml
+    RESOURCES
+        assets/tank_left.png
+        assets/tank_right.png
+        assets/terrain_pattern.png
 )
 
 target_include_directories(artillery_core PUBLIC src)

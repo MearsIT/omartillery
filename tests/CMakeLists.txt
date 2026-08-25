@@ -7,3 +7,4 @@ endfunction()
 
 add_qt_test(test_gameengine)
 add_qt_test(test_physics)
+add_qt_test(test_gameboard)
