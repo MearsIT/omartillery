@@ -29,6 +29,9 @@ qt_add_qml_module(artillery_core
         qml/PlayerControls.qml
         qml/Projectile.qml
         qml/Explosion.qml
+        qml/MainMenu.qml
+        qml/HUD.qml
+        qml/GameOverScreen.qml
     RESOURCES
         assets/tank_left.png
         assets/tank_right.png

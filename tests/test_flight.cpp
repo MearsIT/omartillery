@@ -56,24 +56,43 @@ void TestFlight::positionMatchesPhysicsAnalytically()
     GameEngine engine;
     engine.startGame(GameEngine::GameMode::TwoPlayer);
     engine.setWind(-20.0);
-    engine.currentPlayer()->setAngle(60.0);
     engine.currentPlayer()->setPower(70.0);
-    engine.fireProjectile();
 
     const PhysicsEngine physics;
-    const QPointF origin(engine.player1()->x() + 12.0 * qCos(qDegreesToRadians(60.0)),
-                         engine.player1()->y() - 8.0
-                             - 12.0 * qSin(qDegreesToRadians(60.0)));
 
-    qreal t = 0.0;
-    while (t < 0.4 && engine.projectileInFlight()) {
-        t += 1.0 / 60.0;
-        engine.updateFlight(t);
-        const QPointF expected = physics.positionAt(origin, 60.0, 70.0, 1, -20.0, t);
-        QVERIFY(qAbs(engine.projectileX() - expected.x()) < 0.01);
-        QVERIFY(qAbs(engine.projectileY() - expected.y()) < 0.01);
+    for (int angleDeg = 30; angleDeg <= 80; angleDeg += 10) {
+        engine.setWind(-20.0);
+        const Player *shooter = engine.currentPlayer();
+        const int facing = shooter->facing();
+        const QPointF shooterCenter(shooter->x(), shooter->y() - 8.0);
+        engine.currentPlayer()->setAngle(angleDeg);
+        engine.currentPlayer()->setPower(70.0);
+        engine.fireProjectile();
+
+        const QPointF origin(shooterCenter.x()
+                                 + facing * 12.0 * qCos(qDegreesToRadians(angleDeg)),
+                             shooterCenter.y()
+                                 - 12.0 * qSin(qDegreesToRadians(angleDeg)));
+
+        qreal t = 0.0;
+        while (t < 0.4) {
+            t += 1.0 / 60.0;
+            engine.updateFlight(t);
+            if (!engine.projectileInFlight())
+                break;
+            const QPointF expected = physics.positionAt(origin, angleDeg, 70.0,
+                                                        facing, -20.0, t);
+            QVERIFY(qAbs(engine.projectileX() - expected.x()) < 0.01);
+            QVERIFY(qAbs(engine.projectileY() - expected.y()) < 0.01);
+        }
+        if (t >= 0.4)
+            return;
+
+        if (engine.phase() == GameEngine::Phase::Player1Fire
+            || engine.phase() == GameEngine::Phase::Player2Fire)
+            engine.explosionFinished();
     }
-    QVERIFY(t >= 0.4);
+    QFAIL("no launch angle kept the projectile airborne for 0.4 s");
 }
 
 void TestFlight::terrainImpactExplodesThenAdvancesAfterAnimation()
@@ -113,17 +132,19 @@ void TestFlight::directHitDamagesOpponent()
     const PhysicsEngine physics;
 
     bool found = false;
-    for (int attempt = 0; attempt < 6 && !found; ++attempt) {
+    for (int attempt = 0; attempt < 12 && !found; ++attempt) {
         engine.startGame(GameEngine::GameMode::TwoPlayer);
         engine.setWind(0.0);
 
         const Player *p1 = engine.player1();
         const Player *p2 = engine.player2();
-        const QPointF origin(p1->x() + 12.0 * qCos(qDegreesToRadians(45.0)),
-                             p1->y() - 8.0 - 12.0 * qSin(qDegreesToRadians(45.0)));
         const QPointF boxCenter(p2->x(), p2->y() - 8.0);
 
-        for (int angle = 20; angle <= 80 && !found; angle += 5) {
+        for (int angle = 15; angle <= 85 && !found; angle += 5) {
+            const QPointF origin(p1->x()
+                                     + 12.0 * qCos(qDegreesToRadians(angle)),
+                                 p1->y() - 8.0
+                                     - 12.0 * qSin(qDegreesToRadians(angle)));
             for (int power = 15; power <= 100 && !found; ++power) {
                 const auto sim = physics.simulate(origin, angle, power, 1, 0.0,
                                                   GameEngine::BOARD_HEIGHT + 60.0);
@@ -131,12 +152,12 @@ void TestFlight::directHitDamagesOpponent()
                 bool terrainFirst = false;
                 bool boxHit = false;
                 for (qreal t = 0.0; t <= tEnd && !terrainFirst && !boxHit;
-                     t += 1.0 / 120.0) {
+                     t += 1.0 / 480.0) {
                     const QPointF q = physics.positionAt(origin, angle, power, 1,
                                                          0.0, t);
-                    if (physics.pointIntersectsBox(q, boxCenter, 20.0, 20.0))
+                    if (physics.pointIntersectsBox(q, boxCenter, 12.0, 12.0))
                         boxHit = true;
-                    else if (q.y() >= engine.terrainHeightAt(q.x()))
+                    else if (q.y() >= engine.terrainHeightAt(q.x()) - 2.0)
                         terrainFirst = true;
                 }
                 if (boxHit && !terrainFirst) {

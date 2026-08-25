@@ -86,7 +86,7 @@ void TestGameBoard::rendersTerrainAndSky()
     const QImage frame = window->grabWindow();
     QCOMPARE(frame.size(), QSize(800, 600));
 
-    const QColor sky = frame.pixelColor(400, 8);
+    const QColor sky = frame.pixelColor(400, 100);
     QVERIFY2(qAbs(sky.red() - 0x40) < 4 && qAbs(sky.green() - 0x31) < 4
                  && qAbs(sky.blue() - 0x8D) < 4,
              qPrintable(QStringLiteral("sky color was %1").arg(sky.name())));
