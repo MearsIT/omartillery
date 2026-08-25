@@ -1,82 +1,66 @@
 import QtQuick
 import Quickshell
-import Quickshell.Ui
+import qs.Ui
 
-PanelItem {
-    id: barWidget
+BarWidget {
+  id: root
+  moduleName: "omartillery"
 
-    property string moduleId: "omartillery"
+  readonly property bool opened: panelLoader.item
+    ? panelLoader.item.opened === true
+    : false
+  readonly property bool popoutSwitchClosing: panelLoader.item
+    ? panelLoader.item.popoutSwitchClosing === true
+    : false
 
-    property bool opened: panelLoader.item?.visible ?? false
-    property bool popoutSwitchClosing: panelLoader.item?.popoutSwitchClosing ?? false
+  function open() {
+    if (panelLoader.item) panelLoader.item.open()
+  }
 
-    implicitWidth: button.width
-    implicitHeight: button.height
+  function close() {
+    if (panelLoader.item) panelLoader.item.close()
+  }
 
-    function open() {
-        if (panelLoader.item) {
-            panelLoader.item.open();
-        }
+  function toggle() {
+    if (panelLoader.item) panelLoader.item.toggle()
+  }
+
+  function closeForPopoutSwitch() {
+    if (panelLoader.item) panelLoader.item.closeForPopoutSwitch()
+  }
+
+  function injectPanel() {
+    if (!panelLoader.item) return
+    panelLoader.item.bar = root.bar
+    panelLoader.item.anchorItem = button
+    panelLoader.item.hostWidget = root
+  }
+
+  implicitWidth: button.implicitWidth
+  implicitHeight: button.implicitHeight
+
+  onBarChanged: injectPanel()
+
+  Loader {
+    id: panelLoader
+    active: true
+    source: Qt.resolvedUrl("Panel.qml")
+    visible: false
+    onLoaded: {
+      root.injectPanel()
+      Qt.callLater(root.injectPanel)
     }
+  }
 
-    function close() {
-        if (panelLoader.item) {
-            panelLoader.item.close();
-        }
+  WidgetButton {
+    id: button
+    anchors.fill: parent
+    bar: root.bar
+    text: "🎮"
+    horizontalMargin: 8.5
+    tooltipText: "Artillery Duel"
+    onPressed: function(buttonCode) {
+      if (buttonCode === Qt.LeftButton) root.toggle()
     }
-
-    function toggle() {
-        if (panelLoader.item) {
-            panelLoader.item.toggle();
-        }
-    }
-
-    function closeForPopoutSwitch() {
-        if (panelLoader.item) {
-            panelLoader.item.closeForPopoutSwitch();
-        }
-    }
-
-    function injectPanel() {
-        if (!panelLoader.item) return;
-
-        panelLoader.item.barWidget = barWidget;
-        panelLoader.item.button = button;
-        panelLoader.item.bar = barWidget.bar;
-        panelLoader.item.hostWidget = barWidget;
-    }
-
-    Loader {
-        id: panelLoader
-        active: true
-        visible: false
-        source: "Panel.qml"
-
-        onLoaded: {
-            injectPanel();
-            Qt.callLater(injectPanel);
-        }
-    }
-
-    WidgetButton {
-        id: button
-        contentItem: Item {
-            implicitWidth: label.width + 16
-            implicitHeight: label.height + 8
-
-            Text {
-                id: label
-                anchors.centerIn: parent
-                text: "🎮"
-                font.pixelSize: 16
-                color: button.hovering ? "#BFCE72" : "#9F9F9E"
-            }
-        }
-
-        tooltip: "Artillery Duel"
-
-        onClicked: {
-            toggle();
-        }
-    }
+  }
 }

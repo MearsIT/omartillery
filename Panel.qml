@@ -12,23 +12,29 @@ Item {
     anchors.fill: parent
 
     // Properties for bar-widget integration
+    property bool opened: false
     property bool popoutSwitchClosing: false
-    property var barWidget: null
-    property var button: null
+    property var anchorItem: null
     property var bar: null
     property var hostWidget: null
 
     // Panel lifecycle API methods required by Omarchy shell
     function open() {
         root.visible = true;
+        root.opened = true;
     }
 
     function close() {
         root.visible = false;
+        root.opened = false;
     }
 
     function toggle() {
-        root.visible = !root.visible;
+        if (root.visible) {
+            close();
+        } else {
+            open();
+        }
     }
 
     function closeForPopoutSwitch() {
