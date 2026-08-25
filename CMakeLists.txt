@@ -26,10 +26,14 @@ qt_add_qml_module(artillery_core
         qml/GameBoard.qml
         qml/Tank.qml
         qml/PlayerControls.qml
+        qml/Projectile.qml
+        qml/Explosion.qml
     RESOURCES
         assets/tank_left.png
         assets/tank_right.png
         assets/terrain_pattern.png
+        assets/projectile.png
+        assets/explosion_frames.png
 )
 
 target_include_directories(artillery_core PUBLIC src)

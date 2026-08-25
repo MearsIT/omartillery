@@ -5,6 +5,7 @@
 #include <QtQml/qqmlregistration.h>
 
 #include "player.h"
+#include "physicsengine.h"
 
 class QQmlEngine;
 class QJSEngine;
@@ -21,8 +22,12 @@ class GameEngine : public QObject
     Q_PROPERTY(Player *player2 READ player2 CONSTANT)
     Q_PROPERTY(Player *currentPlayer READ currentPlayer NOTIFY currentPlayerChanged)
     Q_PROPERTY(Player *winner READ winner NOTIFY winnerChanged)
-    Q_PROPERTY(qreal wind READ wind NOTIFY windChanged)
+    Q_PROPERTY(qreal wind READ wind WRITE setWind NOTIFY windChanged)
     Q_PROPERTY(QVariantList terrainHeights READ terrainHeights NOTIFY terrainChanged)
+    Q_PROPERTY(bool projectileInFlight READ projectileInFlight NOTIFY projectileInFlightChanged)
+    Q_PROPERTY(qreal projectileX READ projectileX NOTIFY projectilePositionChanged)
+    Q_PROPERTY(qreal projectileY READ projectileY NOTIFY projectilePositionChanged)
+    Q_PROPERTY(qreal projectileTime READ projectileTime NOTIFY projectilePositionChanged)
 
 public:
     enum class Phase {
@@ -60,12 +65,19 @@ public:
     Player *currentPlayer() const;
     Player *winner() const;
     qreal wind() const;
+    void setWind(qreal wind);
     QVariantList terrainHeights() const;
+    bool projectileInFlight() const;
+    qreal projectileX() const;
+    qreal projectileY() const;
+    qreal projectileTime() const;
 
     Q_INVOKABLE void startGame(GameMode mode);
     Q_INVOKABLE void returnToMenu();
     Q_INVOKABLE void fireProjectile();
     Q_INVOKABLE void resolveShot(bool directHit);
+    Q_INVOKABLE void updateFlight(qreal elapsedSeconds);
+    Q_INVOKABLE void explosionFinished();
     Q_INVOKABLE qreal terrainHeightAt(qreal x) const;
 
 signals:
@@ -76,6 +88,10 @@ signals:
     void windChanged();
     void terrainChanged();
     void projectileFired();
+    void projectileInFlightChanged();
+    void projectilePositionChanged();
+    void explosionAt(qreal x, qreal y);
+    void flightFinished();
     void gameOver(Player *winner);
 
 private:
@@ -84,6 +100,8 @@ private:
     void randomizeWind();
     void generateTerrain();
     void positionPlayers();
+    void impactAt(const QPointF &point, bool directHit);
+    void finishMiss();
 
     Phase m_phase = Phase::Menu;
     GameMode m_mode = GameMode::TwoPlayer;
@@ -95,4 +113,16 @@ private:
     qreal m_wind = 0.0;
     QVector<qreal> m_terrain;
     QVariantList m_terrainList;
+
+    PhysicsEngine m_physics;
+    bool m_projectileInFlight = false;
+    bool m_pendingDirectHit = false;
+    QPointF m_projectilePos;
+    QPointF m_launchOrigin;
+    qreal m_launchAngle = 45.0;
+    qreal m_launchPower = 50.0;
+    int m_launchFacing = 1;
+    qreal m_launchWind = 0.0;
+    qreal m_flightTime = 0.0;
+    qreal m_prevFlightTime = 0.0;
 };

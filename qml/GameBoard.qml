@@ -61,4 +61,27 @@ Item {
     Tank {
         player: GameEngine.player2
     }
+
+    Projectile {}
+
+    Explosion {
+        id: explosionFx
+
+        Connections {
+            target: GameEngine
+            function onExplosionAt(x, y) {
+                explosionFx.x = x - explosionFx.width / 2;
+                explosionFx.y = y - explosionFx.height / 2;
+                explosionFx.restart();
+            }
+        }
+
+        onDone: GameEngine.explosionFinished()
+    }
+
+    FrameAnimation {
+        running: GameEngine.projectileInFlight
+        onTriggered: (deltaTime) =>
+            GameEngine.updateFlight(GameEngine.projectileTime + deltaTime)
+    }
 }

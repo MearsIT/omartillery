@@ -4,6 +4,7 @@
 #include <QJSEngine>
 #include <QQmlEngine>
 #include <QRandomGenerator>
+#include <QtMath>
 
 GameEngine::GameEngine(QObject *parent)
     : QObject(parent),
@@ -55,6 +56,35 @@ qreal GameEngine::wind() const
     return m_wind;
 }
 
+void GameEngine::setWind(qreal wind)
+{
+    const qreal clamped = qBound(-WIND_MAX, wind, WIND_MAX);
+    if (qFuzzyIsNull(m_wind - clamped))
+        return;
+    m_wind = clamped;
+    emit windChanged();
+}
+
+bool GameEngine::projectileInFlight() const
+{
+    return m_projectileInFlight;
+}
+
+qreal GameEngine::projectileX() const
+{
+    return m_projectilePos.x();
+}
+
+qreal GameEngine::projectileY() const
+{
+    return m_projectilePos.y();
+}
+
+qreal GameEngine::projectileTime() const
+{
+    return m_flightTime;
+}
+
 QVariantList GameEngine::terrainHeights() const
 {
     return m_terrainList;
@@ -66,6 +96,10 @@ void GameEngine::startGame(GameMode mode)
         m_mode = mode;
         emit gameModeChanged();
     }
+
+    m_projectileInFlight = false;
+    emit projectileInFlightChanged();
+    m_pendingDirectHit = false;
 
     m_player1->resetForNewGame();
     m_player2->resetForNewGame();
@@ -100,8 +134,99 @@ void GameEngine::fireProjectile()
         && m_phase != Phase::AITurn)
         return;
 
+    const Player *shooter = m_current;
+    const qreal angle = shooter->angle();
+    const qreal radians = qDegreesToRadians(angle);
+    const qreal dir = shooter->facing() < 0 ? -1.0 : 1.0;
+    const QPointF center(shooter->x(), shooter->y() - 8.0);
+    const QPointF muzzle(center.x() + dir * 12.0 * qCos(radians),
+                         center.y() - 12.0 * qSin(radians));
+
+    m_launchOrigin = muzzle;
+    m_launchAngle = angle;
+    m_launchPower = shooter->power();
+    m_launchFacing = shooter->facing();
+    m_launchWind = m_wind;
+    m_flightTime = 0.0;
+    m_prevFlightTime = 0.0;
+    m_projectilePos = muzzle;
+    m_pendingDirectHit = false;
+
     setPhase(m_currentIndex == 0 ? Phase::Player1Fire : Phase::Player2Fire);
+
+    m_projectileInFlight = true;
+    emit projectileInFlightChanged();
+    emit projectilePositionChanged();
     emit projectileFired();
+}
+
+void GameEngine::updateFlight(qreal elapsedSeconds)
+{
+    if (!m_projectileInFlight)
+        return;
+
+    m_prevFlightTime = m_flightTime;
+    m_flightTime = elapsedSeconds;
+    const QPointF p = m_physics.positionAt(m_launchOrigin, m_launchAngle,
+                                           m_launchPower, m_launchFacing,
+                                           m_launchWind, elapsedSeconds);
+
+    if (p.x() < -80.0 || p.x() > BOARD_WIDTH + 80.0
+        || p.y() > BOARD_HEIGHT + 60.0 || elapsedSeconds > 10.0) {
+        finishMiss();
+        return;
+    }
+
+    Player *opponent = m_currentIndex == 0 ? m_player2 : m_player1;
+    const QPointF boxCenter(opponent->x(), opponent->y() - 8.0);
+
+    for (int step = 1; step <= 4; ++step) {
+        const qreal t = m_prevFlightTime
+                + (elapsedSeconds - m_prevFlightTime) * step / 4.0;
+        const QPointF q = m_physics.positionAt(m_launchOrigin, m_launchAngle,
+                                               m_launchPower, m_launchFacing,
+                                               m_launchWind, t);
+        if (m_physics.pointIntersectsBox(q, boxCenter, 20.0, 20.0)) {
+            impactAt(q, true);
+            return;
+        }
+        if (q.y() >= terrainHeightAt(q.x())) {
+            impactAt(q, false);
+            return;
+        }
+    }
+
+    m_projectilePos = p;
+    emit projectilePositionChanged();
+}
+
+void GameEngine::explosionFinished()
+{
+    if (m_phase != Phase::Player1Fire && m_phase != Phase::Player2Fire)
+        return;
+    const bool directHit = m_pendingDirectHit;
+    m_pendingDirectHit = false;
+    resolveShot(directHit);
+    emit flightFinished();
+}
+
+void GameEngine::impactAt(const QPointF &point, bool directHit)
+{
+    m_projectileInFlight = false;
+    emit projectileInFlightChanged();
+    m_projectilePos = point;
+    emit projectilePositionChanged();
+    m_pendingDirectHit = directHit;
+    emit explosionAt(point.x(), point.y());
+}
+
+void GameEngine::finishMiss()
+{
+    m_projectileInFlight = false;
+    emit projectileInFlightChanged();
+    m_pendingDirectHit = false;
+    resolveShot(false);
+    emit flightFinished();
 }
 
 void GameEngine::resolveShot(bool directHit)
