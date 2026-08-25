@@ -1,2 +1,12 @@
 module omartillery
 singleton GameModel 1.0 GameModel.qml
+singleton Theme 1.0 qml/Theme.qml
+Explosion 1.0 qml/Explosion.qml
+GameBoard 1.0 qml/GameBoard.qml
+GameOverScreen 1.0 qml/GameOverScreen.qml
+HUD 1.0 qml/HUD.qml
+MainMenu 1.0 qml/MainMenu.qml
+PlayerControls 1.0 qml/PlayerControls.qml
+Projectile 1.0 qml/Projectile.qml
+RetroButton 1.0 qml/RetroButton.qml
+Tank 1.0 qml/Tank.qml

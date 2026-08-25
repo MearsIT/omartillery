@@ -60,7 +60,7 @@ FocusScope {
     Component.onCompleted: syncSliders()
 
     Connections {
-        target: GameEngine
+        target: GameModel
         function onCurrentPlayerChanged() { controls.syncSliders(); }
     }
 

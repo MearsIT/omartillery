@@ -47,7 +47,7 @@ Item {
         }
 
         Connections {
-            target: GameEngine
+            target: GameModel
             function onTerrainChanged() { terrainCanvas.requestPaint(); }
         }
     }
@@ -66,7 +66,7 @@ Item {
         id: explosionFx
 
         Connections {
-            target: GameEngine
+            target: GameModel
             function onExplosionAt(x, y) {
                 explosionFx.x = x - explosionFx.width / 2;
                 explosionFx.y = y - explosionFx.height / 2;
